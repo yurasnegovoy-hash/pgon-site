@@ -272,6 +272,35 @@ footer .fl{display:flex;gap:22px;flex-wrap:wrap}
   .fee{padding:20px}
   nav{inset:calc(10px + env(safe-area-inset-top,0px)) 0 auto}
 }
+/* выравнивание по центру, когда колонки складываются в одну */
+@media (max-width:1060px){
+  .hero-grid>div:first-child{text-align:center}
+  .hero p.lead{margin-left:auto;margin-right:auto}
+  .cta-row,.hero .facts{justify-content:center}
+}
+@media (max-width:640px){
+  .cta-row{flex-direction:column;align-items:stretch}
+  .cta-row .btn{justify-content:center;width:100%}
+  .hero .facts{display:grid;grid-template-columns:1fr 1fr;gap:20px;text-align:center}
+  .sec-head{flex-direction:column;align-items:center;text-align:center;margin-bottom:40px}
+  .sec-head h2,.sec-head p{margin-left:auto;margin-right:auto}
+  .node,.wc,.tr,.tgc,.wh{text-align:center;align-items:center}
+  .node{min-height:0}.node p{margin-top:6px}
+  .wc{min-height:0}.wc h3{margin-top:16px}
+  .tr .ico{margin-left:auto;margin-right:auto}
+  .fam{text-align:center;align-items:center}
+  .fam p{margin-left:auto;margin-right:auto}
+  .order{align-self:stretch;text-align:left}
+  .calc{text-align:center}
+  .calc .eyebrow{justify-content:center}
+  .ref{flex-direction:column;text-align:center}
+  .ref .btn{justify-content:center;width:100%}
+  .fee{grid-template-columns:1fr;gap:6px;text-align:center}
+  .fee b{text-align:center}
+  .docs{justify-content:center;text-align:center}
+  .final .btn{justify-content:center}
+  footer .wrap,footer .fl{justify-content:center;text-align:center}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.spin{transform:rotateY(-18deg) rotateX(10deg)}}
 </style>
 </head>
