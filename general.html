@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PGON Wallet</title>
+<meta name="description" content="Один баланс в Telegram: оплата по QR СБП в России и карта Visa за $8 для всего мира. Пополнение рублями или USDT">
+<link rel="icon" href="assets/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07060b; --bg2:#0d0b14; --card:rgba(255,255,255,.04); --line:rgba(255,255,255,.09);
+  --text:#f4f1fb; --muted:#a49fb5; --dim:#6f6a82;
+  --v1:#7c3aed; --v2:#a855f7; --v3:#e879f9; --pink:#f0abfc; --lime:#c8ff5a;
+  --grad:linear-gradient(120deg,#7c3aed 0%,#a855f7 45%,#f0abfc 100%);
+  --r:28px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Onest,system-ui,sans-serif;font-size:17px;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+h1,h2,h3,.disp{font-family:Unbounded,Onest,sans-serif;letter-spacing:-.02em;line-height:1.02}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime)}
+.btn{display:inline-flex;align-items:center;gap:12px;height:58px;padding:0 28px;border-radius:999px;font-weight:600;font-size:16px;transition:transform .25s,box-shadow .25s,background .25s;white-space:nowrap}
+.btn-main{background:#fff;color:#0b0812;box-shadow:0 0 0 0 rgba(168,85,247,.0)}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 12px 40px -8px rgba(168,85,247,.7)}
+.btn-main .arr{width:34px;height:34px;border-radius:50%;background:var(--v1);color:#fff;display:grid;place-items:center;margin-right:-14px}
+.btn-ghost{border:1px solid var(--line);color:var(--text);background:rgba(255,255,255,.03)}
+.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.glass{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+
+/* NAV */
+nav{position:fixed;inset:16px 0 auto;z-index:50;pointer-events:none}
+nav .bar{pointer-events:auto;max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 10px 10px 18px;border-radius:999px}
+.logo{display:flex;align-items:center;gap:10px;font-family:Unbounded;font-weight:700;font-size:18px}
+.logo img{width:34px;height:34px}
+nav .links{display:flex;gap:28px;font-size:15px;color:var(--muted)}
+nav .links a:hover{color:var(--text)}
+nav .btn{height:46px;padding:0 20px;font-size:15px}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;padding:150px 0 0;overflow:hidden;isolation:isolate}
+.horizon{position:absolute;left:50%;top:62%;width:1700px;height:1700px;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(closest-side,#0b0812 96%,transparent 100%);
+  box-shadow:0 -2px 0 rgba(240,171,252,.9),0 -20px 80px 10px rgba(168,85,247,.55),0 -60px 220px 60px rgba(124,58,237,.35);z-index:-1}
+.beam{position:absolute;left:50%;top:calc(62% - 10px);width:240px;height:360px;transform:translateX(-50%);background:radial-gradient(ellipse at top,rgba(240,171,252,.55),transparent 70%);filter:blur(30px);z-index:-1;animation:pulse 5s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.55;transform:translateX(-50%) scaleY(.85)}}
+.stars span{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.5;animation:tw 4s infinite}
+@keyframes tw{50%{opacity:.1}}
+.hero .wrap{text-align:center;position:relative}
+.hero h1{font-size:clamp(44px,8vw,116px);font-weight:700;margin:22px auto 22px;max-width:1100px}
+.hero p.lead{font-size:clamp(17px,1.6vw,21px);color:var(--muted);max-width:640px;margin:0 auto 34px}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.stage{position:relative;height:560px;margin-top:40px}
+.phone{position:absolute;left:50%;top:40px;width:270px;transform:translateX(-50%);filter:drop-shadow(0 40px 60px rgba(0,0,0,.6));animation:float 7s ease-in-out infinite}
+@keyframes float{50%{transform:translateX(-50%) translateY(-14px)}}
+.chip{position:absolute;display:flex;align-items:center;gap:12px;padding:12px 16px 12px 12px;border-radius:20px;font-size:14px;text-align:left;min-width:230px;animation:bob 6s ease-in-out infinite}
+.chip b{display:block;font-size:15px}
+.chip small{color:var(--muted)}
+.chip .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.chip .amt{margin-left:auto;font-family:Unbounded;font-size:14px;padding-left:14px}
+.c1{left:6%;top:90px}.c2{right:5%;top:60px;animation-delay:-2s}.c3{left:12%;top:330px;animation-delay:-4s}.c4{right:10%;top:300px;animation-delay:-1s}
+@keyframes bob{50%{translate:0 -10px}}
+.ok{color:var(--lime)}
+
+/* MARQUEE */
+.marquee{border-block:1px solid var(--line);overflow:hidden;padding:22px 0;background:#0a0810}
+.marquee .track{display:flex;gap:48px;width:max-content;animation:mq 28s linear infinite;font-family:Unbounded;font-size:clamp(20px,2.4vw,30px);font-weight:600;white-space:nowrap}
+.marquee .track span{display:flex;align-items:center;gap:48px;color:#d9d3ea}
+.marquee .track span::after{content:"";width:12px;height:12px;border-radius:50%;background:var(--grad)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+section{padding:130px 0;position:relative}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:56px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(34px,5vw,64px);font-weight:700;max-width:760px}
+.sec-head p{color:var(--muted);max-width:380px}
+
+/* TWO COUNTRIES */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.panel{border-radius:var(--r);padding:36px;min-height:560px;position:relative;overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--line)}
+.panel h3{font-size:clamp(26px,3vw,40px);margin:14px 0 14px}
+.panel p{color:var(--muted);max-width:420px}
+.panel .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.tag{padding:8px 14px;border-radius:999px;border:1px solid var(--line);font-size:14px;color:#d9d3ea;background:rgba(255,255,255,.03)}
+.p-ru{background:radial-gradient(120% 80% at 100% 100%,rgba(124,58,237,.45),transparent 60%),var(--bg2)}
+.p-ru .photo{position:relative;margin:36px -70px -80px auto;width:74%;border-radius:24px;transform:rotate(-6deg);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.p-world{background:radial-gradient(120% 80% at 0% 100%,rgba(240,171,252,.28),transparent 60%),var(--bg2)}
+.card3d{position:relative;margin:40px 0 10px auto;width:min(380px,80%);aspect-ratio:1.586;border-radius:22px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;
+  background:linear-gradient(135deg,#1a1229 0%,#3b1d6e 45%,#7c3aed 100%);border:1px solid rgba(255,255,255,.18);box-shadow:0 40px 80px -20px rgba(124,58,237,.6);transform:perspective(900px) rotateY(-14deg) rotateX(8deg);transition:transform .5s}
+.card3d:hover{transform:perspective(900px) rotateY(0) rotateX(0)}
+.card3d::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.22) 45%,transparent 60%);background-size:250% 100%;animation:shine 5s linear infinite}
+@keyframes shine{from{background-position:120% 0}to{background-position:-130% 0}}
+.card3d .top{display:flex;justify-content:space-between;align-items:center}
+.card3d .top img{width:38px}
+.card3d .num{font-family:Unbounded;font-size:19px;letter-spacing:.08em}
+.card3d .bot{display:flex;justify-content:space-between;align-items:end;font-size:13px;color:#e7dcff}
+.visa{font-family:Unbounded;font-weight:800;font-style:italic;font-size:26px;color:#fff}
+.chip-gold{width:42px;height:32px;border-radius:7px;background:linear-gradient(135deg,#f4e3b0,#b8964a)}
+
+/* CALC */
+.calc{border-radius:36px;padding:56px;display:grid;grid-template-columns:1.05fr 1fr;gap:50px;align-items:center;background:radial-gradient(90% 120% at 0% 0%,rgba(124,58,237,.35),transparent 60%),var(--bg2);border:1px solid var(--line)}
+.calc h2{font-size:clamp(32px,4vw,54px)}
+.calc p{color:var(--muted);margin-top:18px}
+.swap{display:flex;flex-direction:column;gap:10px;position:relative}
+.box{border-radius:24px;padding:22px 24px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.box label{font-size:14px;color:var(--muted)}
+.box .row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
+.box input{background:none;border:0;color:var(--text);font-family:Unbounded;font-size:clamp(30px,4vw,44px);width:100%;outline:none;min-width:0}
+.box .cur{font-family:Unbounded;font-size:16px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.08);white-space:nowrap}
+.box .out{font-family:Unbounded;font-size:clamp(30px,4vw,44px)}
+.swap .mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:16px;background:var(--grad);display:grid;place-items:center;border:5px solid var(--bg2);color:#0b0812;font-weight:800}
+.calc .note{font-size:13px;color:var(--dim);margin-top:12px}
+input[type=range]{width:100%;margin-top:18px;accent-color:#a855f7}
+
+/* STEPS */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.step{border-radius:var(--r);padding:32px;border:1px solid var(--line);background:radial-gradient(80% 60% at 0% 0%,rgba(124,58,237,.22),transparent 70%),var(--bg2);position:relative;overflow:hidden;min-height:300px;display:flex;flex-direction:column}
+.step .time{font-family:Unbounded;font-size:clamp(46px,5vw,72px);font-weight:700;line-height:1}
+.step .n{position:absolute;right:24px;top:24px;color:var(--dim);font-family:Unbounded;font-size:14px}
+.step h3{font-size:22px;margin-top:auto;padding-top:40px}
+.step p{color:var(--muted);margin-top:10px;font-size:16px}
+.step:hover{border-color:rgba(168,85,247,.5)}
+
+/* PRICES */
+.prices{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+.price{background:var(--bg);padding:38px 28px}
+.price .v{font-family:Unbounded;font-size:clamp(34px,3.8vw,56px);font-weight:700;white-space:nowrap}
+.price .k{color:var(--muted);margin-top:10px;font-size:16px}
+
+/* COMPARE */
+.cmp{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+.cmp th,.cmp td{padding:22px 24px;text-align:left;border-bottom:1px solid var(--line);font-size:16px}
+.cmp th{font-family:Unbounded;font-weight:600;font-size:15px;color:var(--muted)}
+.cmp tr:last-child td{border-bottom:0}
+.cmp td.us,.cmp th.us{background:rgba(124,58,237,.14);color:#fff}
+.cmp th.us{color:#fff}
+.cmp .no{color:#ff8a9a}
+
+/* TRUST */
+.trust{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.tr{border-radius:var(--r);padding:30px;border:1px solid var(--line);background:var(--bg2)}
+.tr .ico{width:52px;height:52px;border-radius:16px;background:rgba(168,85,247,.16);display:grid;place-items:center;font-size:24px;margin-bottom:26px}
+.tr h3{font-size:20px;margin-bottom:10px}
+.tr p{color:var(--muted);font-size:16px}
+
+/* FAQ */
+.faq{max-width:900px}
+details{border-bottom:1px solid var(--line);padding:26px 0}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;font-size:clamp(18px,2vw,22px);font-weight:600}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:Unbounded;font-size:26px;color:var(--v2);transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--muted);margin-top:14px;max-width:760px}
+
+/* FINAL */
+.final{text-align:center;padding:170px 0 150px;overflow:hidden}
+.final .orb{position:absolute;left:50%;top:50%;width:720px;height:720px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.45),rgba(124,58,237,.12) 45%,transparent 70%);filter:blur(10px);z-index:-1;animation:pulse2 6s ease-in-out infinite}
+@keyframes pulse2{50%{transform:translate(-50%,-50%) scale(1.08)}}
+.final img.mark{width:110px;margin:0 auto 34px;filter:drop-shadow(0 0 40px rgba(240,171,252,.6))}
+.final h2{font-size:clamp(40px,7vw,100px);margin-bottom:26px}
+.final p{color:var(--muted);margin-bottom:36px}
+footer{border-top:1px solid var(--line);padding:40px 0 60px;color:var(--dim);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer a:hover{color:var(--text)}
+footer .fl{display:flex;gap:22px;flex-wrap:wrap}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+@media (max-width:980px){
+  nav .links{display:none}
+  .split,.calc,.steps,.trust{grid-template-columns:1fr}
+  .prices{grid-template-columns:1fr 1fr}
+  .calc{padding:32px}
+  .panel{min-height:520px}
+  .c1,.c3{left:0}.c2,.c4{right:0}
+}
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  section{padding:90px 0}
+  .hero{padding-top:120px}
+  .stage{height:520px}
+  .phone{width:220px}
+  .chip{min-width:0;font-size:12px;padding:10px 12px 10px 10px}
+  .chip .ic{width:32px;height:32px}
+  .chip .amt{font-size:12px}
+  .c1{top:20px}.c2{top:150px}.c3{top:300px}.c4{top:420px}
+  .c1,.c3{left:-6px}.c2,.c4{right:-6px}
+  .cmp th,.cmp td{padding:14px 10px;font-size:13px}
+  .price{padding:26px 18px}
+  .p-ru .photo{width:92%;margin-right:-40px}
+  nav{inset:10px 0 auto}
+  nav .bar{margin:0 10px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav><div class="bar glass">
+  <a class="logo" href="#top"><img src="assets/logo.webp" alt="">PGON</a>
+  <div class="links"><a href="#how">Как работает</a><a href="#prices">Тарифы</a><a href="#compare">Сравнение</a><a href="#faq">Вопросы</a></div>
+  <a class="btn btn-main" href="https://t.me/pgon" target="_blank" rel="noopener">Открыть в Telegram</a>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="horizon"></div><div class="beam"></div>
+  <div class="stars" id="stars"></div>
+  <div class="wrap">
+    <span class="eyebrow"><i></i>Кошелёк и карта Visa в Telegram</span>
+    <h1>Один баланс<br><span class="grad">две страны</span></h1>
+    <p class="lead">В России платите по QR СБП в любом магазине, за границей картой Visa с Apple Pay и Google Pay. Пополнение рублями или USDT</p>
+    <div class="cta-row">
+      <a class="btn btn-main" href="https://t.me/pgon" target="_blank" rel="noopener">Начать за 2 минуты <span class="arr">→</span></a>
+      <a class="btn btn-ghost" href="#how">Как это работает</a>
+    </div>
+    <div class="stage">
+      <img class="phone" src="assets/app1.webp" alt="Приложение PGON Wallet">
+      <div class="chip glass c1"><span class="ic" style="background:#1f7a3a">QR</span><div><b>Пятёрочка</b><small>Оплата по QR СБП</small></div><span class="amt">−1 334 ₽</span></div>
+      <div class="chip glass c2"><span class="ic" style="background:#10a37f">GPT</span><div><b>ChatGPT Plus</b><small>Карта Visa</small></div><span class="amt">−$20</span></div>
+      <div class="chip glass c3"><span class="ic" style="background:#26a17b">₮</span><div><b>Пополнение</b><small>Комиссия 0%</small></div><span class="amt ok">+500 USDT</span></div>
+      <div class="chip glass c4"><span class="ic" style="background:#111;font-size:11px">Pay</span><div><b>Кафе в Стамбуле</b><small>Apple Pay</small></div><span class="amt">−$7,40</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="marquee"><div class="track">
+  <span>QR СБП</span><span>Visa</span><span>Apple Pay</span><span>Google Pay</span><span>Рубли</span><span>USDT</span><span>Telegram</span><span>ChatGPT</span><span>Netflix</span><span>Spotify</span>
+  <span>QR СБП</span><span>Visa</span><span>Apple Pay</span><span>Google Pay</span><span>Рубли</span><span>USDT</span><span>Telegram</span><span>ChatGPT</span><span>Netflix</span><span>Spotify</span>
+</div></div>
+
+<section id="two">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Платите там, где вы <span class="grad">сейчас</span></h2><p>Одни деньги на балансе работают и дома, и в поездке. Не нужно держать две карты и искать обменник</p></div>
+    <div class="split">
+      <div class="panel p-ru reveal">
+        <span class="eyebrow"><i></i>В России</span>
+        <h3>Наводите на QR и оплата проходит за 10 секунд</h3>
+        <p>Магазины, кафе, такси, доставка. Любой QR СБП по всей стране, сумма в рублях списывается с баланса по рыночному курсу</p>
+        <div class="tags"><span class="tag">Любой QR СБП</span><span class="tag">Без P2P</span><span class="tag">Без обменников</span></div>
+        <img class="photo" src="assets/qr-photo.webp" alt="Оплата по QR через PGON">
+      </div>
+      <div class="panel p-world reveal">
+        <span class="eyebrow"><i></i>По всему миру</span>
+        <h3>Карта Visa за $8 готова через 2 минуты</h3>
+        <p>Подписки, сервисы, отели и покупки в поездке. Реальные реквизиты Visa, привязка к Apple Pay и Google Pay</p>
+        <div class="tags"><span class="tag">ChatGPT</span><span class="tag">Netflix</span><span class="tag">Spotify</span><span class="tag">Apple Pay</span></div>
+        <div class="card3d"><div class="top"><img src="assets/logo.webp" alt=""><div class="chip-gold"></div></div><div class="num">4441 •••• •••• 7823</div><div class="bot"><span>PGON USER</span><span class="visa">VISA</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="calc">
+  <div class="wrap">
+    <div class="calc reveal">
+      <div>
+        <span class="eyebrow"><i></i>Калькулятор</span>
+        <h2 style="margin-top:16px">Касса видит рубли, <span class="grad">вы тратите доллары</span></h2>
+        <p>Пополняете баланс в USDT, а в магазине платите по QR в рублях. Конвертация происходит сама в момент оплаты</p>
+        <input type="range" id="rng" min="500" max="100000" step="100" value="8240" aria-label="Сумма покупки">
+        <div class="note" id="rateNote"></div>
+      </div>
+      <div class="swap">
+        <div class="box"><label>Сумма на кассе</label><div class="row"><input id="rub" inputmode="numeric" value="8 240" aria-label="Сумма в рублях"><span class="cur">₽ RUB</span></div></div>
+        <div class="mid">↓</div>
+        <div class="box"><label>Спишется с баланса</label><div class="row"><span class="out" id="usd">100,00</span><span class="cur">₮ USDT</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Три шага до <span class="grad">первой оплаты</span></h2><p>Всё происходит в Telegram, отдельное приложение скачивать не нужно</p></div>
+    <div class="steps">
+      <div class="step reveal"><span class="n">01</span><div class="time grad">1 мин</div><h3>Откройте PGON в Telegram</h3><p>Запустите бота и войдите в кошелёк</p></div>
+      <div class="step reveal"><span class="n">02</span><div class="time grad">0%</div><h3>Пополните баланс</h3><p>Рублями по СБП или в USDT, комиссия за пополнение 0%</p></div>
+      <div class="step reveal"><span class="n">03</span><div class="time grad">10 сек</div><h3>Платите</h3><p>По QR в России или картой Visa в любой точке мира</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="prices">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Тарифы <span class="grad">без звёздочек</span></h2><p>Всё, что стоит денег, видно до оплаты</p></div>
+    <div class="prices reveal">
+      <div class="price"><div class="v grad">$8</div><div class="k">Выпуск карты Visa один раз</div></div>
+      <div class="price"><div class="v">0%</div><div class="k">Комиссия за пополнение</div></div>
+      <div class="price"><div class="v">2 мин</div><div class="k">До готовой карты</div></div>
+      <div class="price"><div class="v">10 сек</div><div class="k">Оплата по QR СБП</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>PGON против <span class="grad">P2P</span></h2><p>Тот же результат без поиска контрагента и ожидания</p></div>
+    <div class="reveal" style="overflow-x:auto">
+    <table class="cmp">
+      <tr><th></th><th class="us">PGON</th><th>P2P на бирже</th></tr>
+      <tr><td>Время оплаты</td><td class="us">10 секунд</td><td>15–30 минут</td></tr>
+      <tr><td>Нужен контрагент</td><td class="us">Нет</td><td class="no">Да</td></tr>
+      <tr><td>Комиссия</td><td class="us">0% за пополнение</td><td>1–3%</td></tr>
+      <tr><td>Где работает</td><td class="us">Любой QR СБП и Visa</td><td>Только вывод на карту</td></tr>
+      <tr><td>Интерфейс</td><td class="us">Telegram</td><td>Биржа или бот</td></tr>
+    </table>
+    </div>
+  </div>
+</section>
+
+<section id="trust">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Спокойно <span class="grad">за каждый платёж</span></h2></div>
+    <div class="trust">
+      <div class="tr reveal"><div class="ico">↺</div><h3>Деньги не теряются</h3><p>Если оплата не прошла, сумма остаётся на балансе, повторить можно сразу</p></div>
+      <div class="tr reveal"><div class="ico">⚡</div><h3>Поддержка за 15 минут</h3><p>Живая поддержка в Telegram отвечает в течение 15 минут</p></div>
+      <div class="tr reveal"><div class="ico">◎</div><h3>Работает официально</h3><p>Сервис InterSpin LLC с политикой AML и пользовательским соглашением</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Частые <span class="grad">вопросы</span></h2></div>
+    <div class="faq reveal">
+      <details><summary>Где работает оплата по QR?</summary><p>Везде в России, где принимают QR СБП: магазины, кафе, такси, доставка и онлайн-сервисы</p></details>
+      <details><summary>По какому курсу USDT конвертируется в рубли?</summary><p>По рыночному курсу в момент оплаты. Итоговая сумма списания видна до подтверждения</p></details>
+      <details><summary>С какими сервисами работает карта Visa?</summary><p>С ChatGPT, Claude, Midjourney, Netflix, Spotify, YouTube, App Store и любыми сайтами, где принимают Visa. Карту можно добавить в Apple Pay и Google Pay</p></details>
+      <details><summary>Что если платёж не прошёл?</summary><p>Деньги не списываются и остаются на балансе. Поддержка в Telegram поможет разобраться за 15 минут</p></details>
+      <details><summary>Можно ли вывести деньги обратно?</summary><p>Да, остаток можно вывести в USDT в любой момент прямо из бота</p></details>
+      <details><summary>Нужна ли верификация?</summary><p>Условия верификации показываются в боте при открытии кошелька. Это стандартная процедура для платёжных сервисов</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="orb"></div>
+  <div class="wrap reveal">
+    <img class="mark" src="assets/logo.webp" alt="PGON">
+    <h2>Деньги, которые<br><span class="grad">работают везде</span></h2>
+    <p>Откройте кошелёк в Telegram и выпустите карту за 2 минуты</p>
+    <a class="btn btn-main" href="https://t.me/pgon" target="_blank" rel="noopener">Открыть PGON <span class="arr">→</span></a>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <span>© 2025–2026 «InterSpin» LLC</span>
+  <div class="fl"><a href="#">Политика конфиденциальности</a><a href="#">Пользовательское соглашение</a><a href="#">Политика AML</a><a href="https://t.me/pgon_support_bot" target="_blank" rel="noopener">Поддержка</a></div>
+</div></footer>
+
+<script>
+// звёзды
+const st=document.getElementById('stars');
+for(let i=0;i<60;i++){const s=document.createElement('span');s.style.left=Math.random()*100+'%';s.style.top=Math.random()*60+'%';s.style.animationDelay=(-Math.random()*4)+'s';s.style.opacity=(.15+Math.random()*.6).toFixed(2);st.appendChild(s)}
+// появление при скролле
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%3*0.08)+'s';io.observe(el)});
+// калькулятор, курс примерный для демонстрации
+const RATE=82.4;
+const rub=document.getElementById('rub'),usd=document.getElementById('usd'),rng=document.getElementById('rng');
+document.getElementById('rateNote').textContent='Пример по курсу 1 USDT = '+RATE.toLocaleString('ru-RU')+' ₽, точный курс показывается перед оплатой';
+const fmt=n=>n.toLocaleString('ru-RU');
+function calc(v){v=Math.max(0,Math.round(v));rub.value=fmt(v);rng.value=v;usd.textContent=(v/RATE).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})}
+rub.addEventListener('input',()=>calc(+rub.value.replace(/\D/g,'')||0));
+rng.addEventListener('input',()=>calc(+rng.value));
+calc(8240);
+</script>
+</body>
+</html>

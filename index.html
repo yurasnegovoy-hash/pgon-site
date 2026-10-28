@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PGON для релокантов</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Получай в рублях, трать в любой валюте: пополнение PGON с российской карты по СБП и оплата картой Visa в любой стране">
+<link rel="icon" href="assets/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Ночное небо с фиолетовым горизонтом. Сюжет страницы: рубли из России превращаются в покупки в любой стране. Герой: вращающаяся карта и всплывающие оплаты */
+:root{
+  --bg:#07060b; --bg2:#0e0b16; --line:rgba(255,255,255,.09); --glass:rgba(255,255,255,.05);
+  --text:#f5f2fc; --muted:#a7a1b8; --dim:#6f6a82;
+  --v1:#7c3aed; --v2:#a855f7; --v3:#f0abfc; --lime:#c8ff5a;
+  --grad:linear-gradient(120deg,#7c3aed 0%,#a855f7 45%,#f0abfc 100%);
+  --display:Unbounded,"Arial Black",system-ui,sans-serif; --body:Onest,system-ui,-apple-system,sans-serif;
+  --r:28px; color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--v3);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+h1,h2,h3,.disp{font-family:var(--display);letter-spacing:-.025em;line-height:1;text-wrap:balance}
+p,.lead,.sec-head p{text-wrap:pretty}
+.manifesto p,.final p,.sec-head p,.wc p,.node p,.tr p{text-wrap:balance}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime)}
+.btn{display:inline-flex;align-items:center;gap:12px;height:58px;padding:0 28px;border-radius:999px;font-weight:600;font-size:16px;transition:transform .25s,box-shadow .25s,background .25s;white-space:nowrap}
+.btn-main{background:var(--text);color:var(--bg)}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 12px 40px -8px rgba(168,85,247,.75)}
+.btn-main .arr{width:34px;height:34px;border-radius:50%;background:var(--v1);color:var(--text);display:grid;place-items:center;margin-right:-14px}
+.btn-ghost{border:1px solid var(--line);color:var(--text);background:var(--glass)}
+.btn-ghost:hover{background:rgba(255,255,255,.09)}
+.glass{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+section{padding-block:120px;position:relative}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:56px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(34px,5vw,64px);font-weight:700;max-width:800px}
+.sec-head p{color:var(--muted);max-width:380px}
+.pill{padding:7px 13px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:#d9d3ea;background:var(--glass);white-space:nowrap}
+
+/* NAV */
+nav{position:fixed;inset:calc(14px + env(safe-area-inset-top,0px)) 0 auto;z-index:50;pointer-events:none;padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
+nav .bar{pointer-events:auto;max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 10px 10px 18px;border-radius:999px;background:rgba(7,6,11,.55)}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:18px}
+.logo img{width:34px;height:34px}
+nav .links{display:flex;gap:28px;font-size:15px;color:var(--muted)}
+nav .links a:hover{color:var(--text)}
+nav .btn{height:46px;padding:0 20px;font-size:15px}
+
+/* HERO */
+.hero{position:relative;padding:140px 0 70px;overflow:hidden;isolation:isolate}
+.horizon{position:absolute;left:50%;top:560px;width:1900px;height:1900px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,var(--bg) 96%,transparent 100%);
+  box-shadow:0 -2px 0 rgba(240,171,252,.85),0 -20px 80px 10px rgba(168,85,247,.5),0 -60px 220px 60px rgba(124,58,237,.32);z-index:-1}
+.stars span{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--text);animation:tw 4s infinite}
+@keyframes tw{50%{opacity:.1}}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
+.hero-grid>div{min-width:0}
+.hero h1{font-size:clamp(38px,5.1vw,76px);font-weight:800;letter-spacing:-.04em;line-height:.98;margin:22px 0 22px}
+.rot{display:inline-grid;vertical-align:bottom;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}
+.rot span{grid-area:1/1;opacity:0;transform:translateY(105%);transition:opacity .35s,transform .55s cubic-bezier(.7,0,.2,1);background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rot span.on{opacity:1;transform:none;transition-delay:.12s}
+.rot span.out{opacity:0;transform:translateY(-105%);transition-delay:0s}
+.hero p.lead{font-size:clamp(17px,1.5vw,20px);color:var(--muted);max-width:560px;margin-bottom:32px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+.hero .facts{display:flex;gap:26px;flex-wrap:wrap;margin-top:34px;color:var(--muted);font-size:15px}
+.hero .facts b{display:block;font-family:var(--display);font-size:24px;color:var(--text);font-variant-numeric:tabular-nums}
+
+/* вращающаяся карта */
+.card-scene{position:relative;height:520px;perspective:1300px;display:grid;place-items:center}
+.card-glow{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.5),transparent 65%);filter:blur(20px);animation:pulse 5s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.12);opacity:.7}}
+.spin{position:relative;width:min(380px,82vw);aspect-ratio:1.586;transform-style:preserve-3d;animation:spin 12s cubic-bezier(.45,.05,.55,.95) infinite}
+@keyframes spin{0%{transform:rotateY(-18deg) rotateX(10deg)}40%{transform:rotateY(-18deg) rotateX(10deg)}50%{transform:rotateY(162deg) rotateX(10deg)}90%{transform:rotateY(162deg) rotateX(10deg)}100%{transform:rotateY(342deg) rotateX(10deg)}}
+.face{position:absolute;inset:0;border-radius:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;border:1px solid rgba(255,255,255,.2);
+  background:linear-gradient(135deg,#140d22 0%,#3b1d6e 48%,#8b45f0 100%);box-shadow:0 50px 90px -25px rgba(124,58,237,.75)}
+.face::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,rgba(240,171,252,.35),transparent 55%),repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 9px)}
+.face::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.25) 45%,transparent 60%);background-size:250% 100%;animation:shine 4s linear infinite}
+@keyframes shine{from{background-position:120% 0}to{background-position:-130% 0}}
+.front{padding:26px;display:flex;flex-direction:column;justify-content:space-between}
+.front .top{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+.front .top img{width:42px}
+.chip-gold{width:46px;height:35px;border-radius:8px;background:linear-gradient(135deg,#f4e3b0,#b8964a);position:relative}
+.chip-gold::after{content:"";position:absolute;inset:8px 10px;border:1px solid rgba(0,0,0,.25);border-radius:4px}
+.front .num{font-family:var(--display);font-size:clamp(15px,1.7vw,20px);letter-spacing:.08em;position:relative;z-index:1}
+.front .bot{display:flex;justify-content:space-between;align-items:end;font-size:13px;color:#e7dcff;position:relative;z-index:1}
+.visa{font-family:var(--display);font-weight:800;font-style:italic;font-size:30px;color:var(--text)}
+.back{transform:rotateY(180deg)}
+.back .strip{position:absolute;left:0;right:0;top:30px;height:46px;background:#06040a}
+.back .sign{position:absolute;left:24px;right:90px;top:100px;height:38px;border-radius:6px;background:repeating-linear-gradient(90deg,#e9e3f5 0 6px,#d9d0ec 6px 12px)}
+.back .cvv{position:absolute;right:24px;top:100px;width:56px;height:38px;border-radius:6px;background:var(--text);color:var(--bg);display:grid;place-items:center;font-family:var(--display);font-size:13px}
+.back .brand{position:absolute;left:24px;bottom:22px;display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;z-index:1}
+.back .brand img{width:30px}
+.back .visa{position:absolute;right:24px;bottom:16px;z-index:1}
+/* всплывающие оплаты */
+.toasts{position:absolute;inset:0;pointer-events:none}
+.toast{position:absolute;display:flex;align-items:center;gap:12px;padding:11px 16px 11px 11px;border-radius:18px;font-size:14px;min-width:240px;opacity:0;transform:translateY(16px) scale(.96);transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.toast.on{opacity:1;transform:none}
+.toast .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:12px;flex:none;color:var(--text)}
+.toast b{display:block;font-size:14px}.toast small{color:var(--muted);font-size:12px}
+.toast .amt{margin-left:auto;font-family:var(--display);font-size:14px;padding-left:12px;font-variant-numeric:tabular-nums}
+.t1{left:-2%;top:30px}.t2{right:-4%;bottom:56px}.t3{left:-2%;bottom:120px}
+
+/* МАРКИ ВАЛЮТ */
+.cur-band{border-block:1px solid var(--line);background:var(--bg2);overflow:hidden;padding-block:20px}
+.cur-track{display:flex;gap:46px;width:max-content;animation:mq 30s linear infinite;font-family:var(--display);font-size:clamp(18px,2.2vw,28px);font-weight:600;white-space:nowrap}
+.cur-track span{display:flex;align-items:center;gap:14px;color:#d9d3ea}
+.cur-track span em{font-style:normal;color:var(--v3)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ПОТОК РУБЛЕЙ */
+.pipe{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:18px;align-items:center}
+.node{border-radius:var(--r);padding:30px;border:1px solid var(--line);background:var(--bg2);min-height:230px;display:flex;flex-direction:column;min-width:0}
+.node .k{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.node .v{font-family:var(--display);font-size:clamp(26px,3vw,42px);font-weight:700;margin:16px 0 10px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.node p{color:var(--muted);font-size:15px;margin-top:auto}
+.node.mid{background:radial-gradient(100% 90% at 50% 0%,rgba(124,58,237,.35),transparent 70%),var(--bg2);border-color:rgba(168,85,247,.45)}
+.node.end{background:radial-gradient(100% 90% at 50% 0%,rgba(200,255,90,.12),transparent 70%),var(--bg2)}
+.node.end .v{color:var(--lime)}
+.wire{width:64px;height:2px;background:var(--line);position:relative;overflow:hidden;border-radius:2px}
+.wire::after{content:"";position:absolute;top:-3px;left:-30%;width:30%;height:8px;border-radius:8px;background:var(--grad);filter:blur(1px);animation:run 1.8s linear infinite}
+@keyframes run{to{left:100%}}
+
+/* КОМУ */
+.who{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.wc{border-radius:var(--r);padding:28px;border:1px solid var(--line);background:var(--bg2);display:flex;flex-direction:column;min-height:280px;min-width:0;transition:transform .35s,border-color .35s}
+.wc:hover{transform:translateY(-6px);border-color:rgba(168,85,247,.55)}
+.wc .em{font-family:var(--display);font-size:42px;font-weight:800;line-height:1}
+.wc h3{font-size:20px;margin:22px 0 10px;line-height:1.15}
+.wc p{color:var(--muted);font-size:15px}
+
+/* СЕРВИСЫ */
+.svc{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.sv{position:relative;border-radius:22px;padding:22px;border:1px solid var(--line);background:var(--bg2);display:flex;align-items:center;gap:14px;overflow:hidden;min-width:0}
+.sv .lg{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:15px;flex:none;color:var(--text)}
+.sv b{display:block;font-size:16px}.sv small{color:var(--muted)}
+.sv .st{position:absolute;right:16px;top:50%;transform:translateY(-50%) scale(.6);opacity:0;color:var(--lime);font-family:var(--display);font-size:13px;transition:all .4s}
+.sv.paid{border-color:rgba(200,255,90,.5)}
+.sv.paid .st{opacity:1;transform:translateY(-50%) scale(1)}
+.sv.paid::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(200,255,90,.08),transparent);animation:sweep .9s ease-out}
+@keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+
+/* РОДНЫЕ */
+.family{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.fam{border-radius:32px;padding:40px;border:1px solid var(--line);position:relative;overflow:hidden;min-height:520px;display:flex;flex-direction:column;min-width:0}
+.fam h3{font-size:clamp(26px,3vw,40px);margin:14px 0 14px}
+.fam p{color:var(--muted);max-width:440px}
+.fam.a{background:radial-gradient(120% 80% at 100% 100%,rgba(124,58,237,.45),transparent 60%),var(--bg2)}
+.fam.a .photo{width:76%;margin:34px -70px -90px auto;border-radius:24px;transform:rotate(-6deg);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.fam.b{background:radial-gradient(120% 80% at 0% 100%,rgba(240,171,252,.25),transparent 60%),var(--bg2)}
+.order{margin-top:auto;border-radius:24px;padding:22px;max-width:360px;align-self:flex-end;width:100%}
+.order .row{display:flex;justify-content:space-between;color:var(--muted);font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+.order .row b{color:var(--text);font-variant-numeric:tabular-nums}
+.order .tot{display:flex;justify-content:space-between;align-items:end;margin-top:14px}
+.order .tot b{font-family:var(--display);font-size:28px}
+.order .paid{margin-top:14px;display:flex;align-items:center;gap:8px;color:var(--lime);font-weight:600;font-size:14px}
+
+/* КАЛЬКУЛЯТОР */
+.calc{border-radius:36px;padding:56px;display:grid;grid-template-columns:1.05fr 1fr;gap:50px;align-items:center;background:radial-gradient(90% 120% at 0% 0%,rgba(124,58,237,.35),transparent 60%),var(--bg2);border:1px solid var(--line)}
+.calc>div{min-width:0}
+.calc h2{font-size:clamp(30px,4vw,52px)}
+.calc p{color:var(--muted);margin-top:18px}
+.swap{display:flex;flex-direction:column;gap:10px;position:relative}
+.box{border-radius:24px;padding:22px 24px;background:var(--glass);border:1px solid var(--line)}
+.box label{font-size:14px;color:var(--muted)}
+.box .row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
+.box input{background:none;border:0;color:var(--text);font-family:var(--display);font-size:clamp(28px,4vw,44px);width:100%;outline:none;min-width:0;font-variant-numeric:tabular-nums}
+.box .cur{font-family:var(--display);font-size:15px;padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.08);white-space:nowrap}
+.box .out{font-family:var(--display);font-size:clamp(28px,4vw,44px);font-variant-numeric:tabular-nums}
+.swap .mid{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:50px;height:50px;border-radius:16px;background:var(--grad);display:grid;place-items:center;border:5px solid var(--bg2);color:var(--bg);font-weight:800}
+.calc .note{font-size:13px;color:var(--dim);margin-top:12px}
+input[type=range]{width:100%;margin-top:18px;accent-color:var(--v2)}
+
+/* ТАРИФЫ */
+.fees{border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+.fee{display:grid;grid-template-columns:1fr auto;gap:20px;padding:24px 30px;border-bottom:1px solid var(--line);align-items:center}
+.fee:last-child{border-bottom:0}
+.fee:nth-child(odd){background:var(--bg2)}
+.fee span{color:var(--muted)}
+.fee b{font-family:var(--display);font-size:clamp(18px,2.2vw,28px);font-variant-numeric:tabular-nums;text-align:right}
+.fee b.hi{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ДОВЕРИЕ */
+.trust{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:18px}
+.tr{border-radius:var(--r);padding:30px;border:1px solid var(--line);background:var(--bg2);min-width:0}
+.tr.nb{background:radial-gradient(100% 90% at 100% 0%,rgba(240,171,252,.2),transparent 65%),var(--bg2)}
+.tr .disp{font-size:clamp(26px,2.8vw,38px);font-weight:700;margin-bottom:14px}
+.tr h3{font-size:20px;margin-bottom:10px}
+.tr p{color:var(--muted);font-size:16px}
+.tr .ico{width:48px;height:48px;border-radius:15px;background:rgba(168,85,247,.16);display:grid;place-items:center;font-size:18px;margin-bottom:22px;font-family:var(--display)}
+
+/* FAQ */
+.faq{max-width:920px}
+details{border-bottom:1px solid var(--line);padding:24px 0}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;font-size:clamp(18px,2vw,22px);font-weight:600}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--display);font-size:26px;color:var(--v2);transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--muted);margin-top:14px;max-width:760px}
+
+/* МАНИФЕСТ */
+.manifesto{text-align:center;overflow:hidden;padding-block:100px}
+.manifesto .line{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:clamp(38px,8.4vw,126px);line-height:1;letter-spacing:-.04em;display:block}
+.manifesto .line:nth-child(2){color:transparent;-webkit-text-stroke:1.5px rgba(240,171,252,.85)}
+.manifesto .line:nth-child(3){background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.manifesto p{color:var(--muted);max-width:720px;margin:34px auto 0}
+/* РЕФЕРАЛКА */
+.ref{border-radius:32px;padding:44px;display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap;border:1px solid rgba(168,85,247,.4);background:radial-gradient(80% 140% at 100% 50%,rgba(240,171,252,.22),transparent 60%),radial-gradient(60% 120% at 0% 0%,rgba(124,58,237,.3),transparent 60%),var(--bg2)}
+.ref>div{max-width:680px;min-width:0}
+.ref h2{font-size:clamp(28px,3.6vw,46px);margin:14px 0 12px}
+.ref p{color:var(--muted)}
+#friends{padding-block:20px 120px}
+/* TELEGRAM И ДОКУМЕНТЫ */
+.tg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
+.tgc{border-radius:22px;padding:22px;border:1px solid var(--line);background:var(--bg2);display:flex;flex-direction:column;gap:6px;transition:border-color .3s,transform .3s;min-width:0}
+.tgc:hover{border-color:rgba(168,85,247,.55);transform:translateY(-3px)}
+.tgc .k{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.tgc b{font-family:var(--display);font-size:17px;overflow-wrap:anywhere}
+.tgc .n{color:var(--v3);font-size:14px}
+.docs{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:26px;font-size:15px}
+.docs a{color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:3px}
+.docs a:hover{color:var(--text);border-color:var(--v2)}
+
+/* ФИНАЛ */
+.final{text-align:center;padding-block:160px 140px;overflow:hidden;isolation:isolate}
+.final .orb{position:absolute;left:50%;top:50%;width:760px;height:760px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.45),rgba(124,58,237,.12) 45%,transparent 70%);z-index:-1;animation:pulse2 6s ease-in-out infinite}
+@keyframes pulse2{50%{transform:translate(-50%,-50%) scale(1.08)}}
+.final img.mark{width:100px;margin:0 auto 30px;filter:drop-shadow(0 0 40px rgba(240,171,252,.6))}
+.final h2{font-size:clamp(38px,7vw,104px);font-weight:800;letter-spacing:-.04em;line-height:.98;margin-bottom:26px}
+.final p{color:var(--muted);margin-bottom:34px}
+footer{border-top:1px solid var(--line);padding-block:36px 56px;color:var(--dim);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer a:hover{color:var(--text)}
+footer .fl{display:flex;gap:22px;flex-wrap:wrap}
+
+@media (max-width:1060px){
+  nav .links{display:none}
+  .hero-grid{grid-template-columns:1fr}
+  .card-scene{height:440px}
+  .pipe{grid-template-columns:1fr}
+  .wire{width:2px;height:40px;margin:0 auto}
+  .wire::after{left:-3px;top:-30%;width:8px;height:30%;animation:rundown 1.8s linear infinite}
+  @keyframes rundown{to{top:100%}}
+  .who,.svc{grid-template-columns:1fr 1fr}
+  .family,.calc,.trust{grid-template-columns:1fr}
+  .tg{grid-template-columns:1fr 1fr}
+  .calc{padding:32px}
+}
+@media (max-width:640px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  section{padding-block:84px}
+  .hero{padding-top:118px}
+  .horizon{top:760px}
+  .card-scene{height:400px}
+  .toast{min-width:0;font-size:12px;padding:9px 12px 9px 9px}
+  .toast .ic{width:32px;height:32px}
+  .t1{left:0;top:10px}.t2{right:0;top:auto;bottom:110px}.t3{left:0;bottom:20px}
+  .who,.svc,.tg{grid-template-columns:1fr}
+  .ref{padding:28px}
+  .fam{padding:28px;min-height:0}
+  .fam.a .photo{width:92%;margin-right:-40px}
+  .order{max-width:none;margin-top:30px}
+  .fee{padding:20px}
+  nav{inset:calc(10px + env(safe-area-inset-top,0px)) 0 auto}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.spin{transform:rotateY(-18deg) rotateX(10deg)}}
+</style>
+</head>
+<body>
+
+
+<nav><div class="bar glass">
+  <a class="logo" href="#top"><img src="assets/logo.webp" alt="">PGON</a>
+  <div class="links"><a href="#how">Как работает</a><a href="#family">Родным</a><a href="#fees">Тарифы</a><a href="#faq">Вопросы</a></div>
+  <a class="btn btn-main" href="https://t.me/pgon" target="_blank" rel="noopener">Открыть PGON</a>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="horizon"></div>
+  <div class="stars" id="stars"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><i></i>Для тех, кто давно живёт не в России</span>
+      <h1>Получай в рублях<br><span class="grad">трать в </span><span class="rot" id="rot"><span class="on">долларах</span><span>евро</span><span>лирах</span><span>лари</span><span>батах</span><span>дирхамах</span><span>тенге</span><span>динарах</span></span></h1>
+      <p class="lead">PGON закрывает все вопросы с рублями. Получай их как раньше на российскую карту, пополняй кошелёк по СБП и плати картой Visa в любой стране, а приехав домой, по QR как местный</p>
+      <div class="cta-row">
+        <a class="btn btn-main" href="https://t.me/pgon" target="_blank" rel="noopener">Выпустить карту за $8 <span class="arr">→</span></a>
+        <a class="btn btn-ghost" href="#how">Как это работает</a>
+      </div>
+      <div class="facts"><div><b>$8</b>выпуск карты</div><div><b>2 мин</b>до готовой карты</div><div><b>0%</b>за пополнение</div><div><b>41,7K</b>в канале PGON</div></div>
+    </div>
+    <div class="card-scene">
+      <div class="card-glow"></div>
+      <div class="spin" aria-label="Карта PGON Visa">
+        <div class="face front"><div class="top"><img src="assets/logo.webp" alt=""><div class="chip-gold"></div></div><div class="num">4441 •••• •••• 7823</div><div class="bot"><span>PGON USER</span><span class="visa">VISA</span></div></div>
+        <div class="face back"><div class="strip"></div><div class="sign"></div><div class="cvv">•••</div><div class="brand"><img src="assets/logo.webp" alt="">PGON</div><span class="visa">VISA</span></div>
+      </div>
+      <div class="toasts" id="toasts">
+        <div class="toast glass t1"><span class="ic" style="background:#2b6cff">₽</span><div><b>Пополнение по СБП</b><small>с карты российского банка</small></div><span class="amt" style="color:var(--lime)">+40 000 ₽</span></div>
+        <div class="toast glass t2"><span class="ic" style="background:#e50914">N</span><div><b>Netflix</b><small>Visa · подписка</small></div><span class="amt">−$15,49</span></div>
+        <div class="toast glass t3"><span class="ic" style="background:#222">Pay</span><div><b>Кофейня в Тбилиси</b><small>Apple Pay</small></div><span class="amt">−12 GEL</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="cur-band" aria-hidden="true"><div class="cur-track">
+  <span>₽ <em>→</em> $</span><span>₽ <em>→</em> €</span><span>₽ <em>→</em> ₺</span><span>₽ <em>→</em> ₾</span><span>₽ <em>→</em> ฿</span><span>₽ <em>→</em> AED</span><span>₽ <em>→</em> ₸</span><span>₽ <em>→</em> RSD</span><span>₽ <em>→</em> ₫</span><span>₽ <em>→</em> Rp</span>
+  <span>₽ <em>→</em> $</span><span>₽ <em>→</em> €</span><span>₽ <em>→</em> ₺</span><span>₽ <em>→</em> ₾</span><span>₽ <em>→</em> ฿</span><span>₽ <em>→</em> AED</span><span>₽ <em>→</em> ₸</span><span>₽ <em>→</em> RSD</span><span>₽ <em>→</em> ₫</span><span>₽ <em>→</em> Rp</span>
+</div></div>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head"><h2>Как рубли <span class="grad">становятся покупками</span> за границей</h2><p>Без обменников, P2P и переводов на чужие карты</p></div>
+    <div class="pipe">
+      <div class="node"><span class="k">Приходят рубли</span><div class="v">40 000 ₽</div><p>Зарплата, оплата от клиента или аренда квартиры падают на твою российскую карту</p></div>
+      <div class="wire" aria-hidden="true"></div>
+      <div class="node mid"><span class="k">Пополняешь PGON</span><div class="v">СБП · 0%</div><p>Перевод по СБП со своей карты в бот в Telegram. Комиссия за пополнение 0%</p></div>
+      <div class="wire" aria-hidden="true"></div>
+      <div class="node end"><span class="k">Платишь где угодно</span><div class="v">Оплачено ✓</div><p>Картой Visa онлайн и в магазинах, телефоном через Apple Pay и Google Pay</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="manifesto" aria-label="Без обменников, без ожидания, без P2P">
+  <div class="wrap">
+    <span class="line">Без обменников</span>
+    <span class="line">Без ожидания</span>
+    <span class="line">Без P2P</span>
+    <p>Не нужно искать продавца, ждать перевод и держать деньги на чужой карте. Пополнил со своей карты и сразу платишь</p>
+  </div>
+</section>
+
+<section id="who">
+  <div class="wrap">
+    <div class="sec-head"><h2>Если деньги в России, <span class="grad">а жизнь уже нет</span></h2></div>
+    <div class="who">
+      <div class="wc"><div class="em grad">01</div><h3>Работаешь удалённо на российскую компанию</h3><p>Зарплата приходит в рублях, а тратить её нужно в евро, лирах или батах</p></div>
+      <div class="wc"><div class="em grad">02</div><h3>Сдаёшь квартиру в России</h3><p>Арендаторы платят на российскую карту, а ты пополняешь PGON и живёшь на эти деньги за границей</p></div>
+      <div class="wc"><div class="em grad">03</div><h3>Клиенты платят в рублях</h3><p>Заказчики из России платят привычно на твою карту, а ты тратишь эти деньги в любой стране</p></div>
+      <div class="wc"><div class="em grad">04</div><h3>Помогаешь родным</h3><p>Приезжаешь домой и платишь по QR сам или оплачиваешь покупки родителей</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head"><h2>Подписки и сервисы, <span class="grad">которые снова проходят</span></h2><p>Карта PGON с реальными реквизитами Visa работает там, где российская карта не проходит</p></div>
+    <div class="svc" id="svc">
+      <div class="sv"><span class="lg" style="background:#10a37f">AI</span><div><b>ChatGPT Plus</b><small>$20 в месяц</small></div><span class="st">Оплачено ✓</span></div>
+      <div class="sv"><span class="lg" style="background:#e50914">N</span><div><b>Netflix</b><small>от $7,99</small></div><span class="st">Оплачено ✓</span></div>
+      <div class="sv"><span class="lg" style="background:#1db954">♫</span><div><b>Spotify</b><small>Premium</small></div><span class="st">Оплачено ✓</span></div>
+      <div class="sv"><span class="lg" style="background:#ff0033">▶</span><div><b>YouTube Premium</b><small>без рекламы</small></div><span class="st">Оплачено ✓</span></div>
+      <div class="sv"><span class="lg" style="background:#d97757">C</span><div><b>Claude Pro</b><small>нейросеть</small></div><span class="st">Оплачено ✓</span></div>
+      <div class="sv"><span class="lg" style="background:#ff385c">A</span><div><b>Airbnb</b><small>жильё в поездке</small></div><span class="st">Оплачено ✓</span></div>
+      <div class="sv"><span class="lg" style="background:#003b95">B</span><div><b>Booking</b><small>отели</small></div><span class="st">Оплачено ✓</span></div>
+      <div class="sv"><span class="lg" style="background:#555">⌘</span><div><b>App Store</b><small>приложения и iCloud</small></div><span class="st">Оплачено ✓</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="family">
+  <div class="wrap">
+    <div class="sec-head"><h2>Для поездок домой <span class="grad">и для родных</span></h2><p>Российская карта осталась в прошлом, а платить в России всё равно нужно</p></div>
+    <div class="family">
+      <div class="fam a">
+        <span class="eyebrow"><i></i>Прилетел в Россию</span>
+        <h3>Плати по QR как местный</h3>
+        <p>Наводишь камеру на QR СБП в магазине, кафе или такси, и оплата проходит за 10 секунд с того же баланса PGON. Российская карта для этого не нужна</p>
+        <img class="photo" src="assets/qr-photo.webp" alt="Оплата по QR СБП через PGON">
+      </div>
+      <div class="fam b">
+        <span class="eyebrow"><i></i>Помощь родителям</span>
+        <h3>Оплати заказ родным из любой страны</h3>
+        <p>Продукты с доставкой, лекарства или покупка в интернет-магазине: если на оплате есть QR СБП, его можно оплатить из PGON, где бы ты ни был</p>
+        <div class="order glass">
+          <div class="row"><span>Доставка продуктов, Екатеринбург</span><b>4 870 ₽</b></div>
+          <div class="row"><span>Аптека, лекарства для мамы</span><b>1 640 ₽</b></div>
+          <div class="tot"><span style="color:var(--muted)">Итого</span><b>6 510 ₽</b></div>
+          <div class="paid">● Оплачено по QR из Белграда</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="friends">
+  <div class="wrap">
+    <div class="ref">
+      <div><span class="eyebrow"><i></i>Друзья тоже уехали</span><h2>Приглашай друзей <span class="grad">в PGON</span></h2><p>У каждого пользователя есть реферальная ссылка. Друзья платят картой и по QR, а ты получаешь вознаграждение с их покупок. Условия программы показаны в боте</p></div>
+      <a class="btn btn-main" href="https://t.me/pgon" target="_blank" rel="noopener">Получить ссылку <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+<section id="calc">
+  <div class="wrap">
+    <div class="calc">
+      <div>
+        <span class="eyebrow"><i></i>Калькулятор</span>
+        <h2 style="margin-top:16px">Сколько это <span class="grad">в долларах</span></h2>
+        <p>Пополняешь PGON рублями, на балансе получаешь доллары. При оплате в евро, лирах или любой другой валюте пересчёт делает Visa</p>
+        <input type="range" id="rng" min="1000" max="300000" step="1000" value="40000" aria-label="Сумма пополнения в рублях">
+        <div class="note" id="rateNote"></div>
+      </div>
+      <div class="swap">
+        <div class="box"><label for="rub">Пополняешь</label><div class="row"><input id="rub" inputmode="numeric" value="40 000"><span class="cur">₽ RUB</span></div></div>
+        <div class="mid" aria-hidden="true">↓</div>
+        <div class="box"><label>На балансе</label><div class="row"><span class="out" id="usd">485,44</span><span class="cur">$ USD</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="fees">
+  <div class="wrap">
+    <div class="sec-head"><h2>Тарифы <span class="grad">без мелкого шрифта</span></h2><p>Всё, что стоит денег, видно до оплаты</p></div>
+    <div class="fees">
+      <div class="fee"><span>Выпуск виртуальной карты Visa</span><b class="hi">$8 один раз</b></div>
+      <div class="fee"><span>Пополнение рублями по СБП или в USDT</span><b class="hi">0%</b></div>
+      <div class="fee"><span>Время до готовой карты</span><b>2 минуты</b></div>
+      <div class="fee"><span>Оплата по QR СБП в России</span><b>до 10 секунд</b></div>
+      <div class="fee"><span>Apple Pay и Google Pay</span><b>есть</b></div>
+    </div>
+  </div>
+</section>
+
+<section id="trust">
+  <div class="wrap">
+    <div class="sec-head"><h2>Прозрачно <span class="grad">по умолчанию</span></h2><p>Все документы открыты до регистрации, сервис живёт в Telegram у всех на виду</p></div>
+    <div class="trust">
+      <div class="tr nb"><div class="disp">Мы не банк</div><p>PGON это платёжный сервис компании InterSpin LLC. По пользовательскому соглашению компания зарегистрирована и лицензирована в Республике Казахстан</p></div>
+      <div class="tr"><div class="ico">ID</div><h3>Проверка KYC для всех</h3><p>Каждый пользователь проходит верификацию по политике AML. Анонимных счетов нет, поэтому сервису доверяют платёжные партнёры</p></div>
+      <div class="tr"><div class="ico">↺</div><h3>Деньги не теряются</h3><p>Если оплата не прошла, сумма остаётся на балансе. Поддержка в Telegram отвечает в течение 15 минут</p></div>
+    </div>
+    <div class="tg">
+      <a class="tgc" href="https://t.me/pgon_wallet" target="_blank" rel="noopener"><span class="k">Канал</span><b>@pgon_wallet</b><span class="n">41,7 тыс. подписчиков</span></a>
+      <a class="tgc" href="https://t.me/pgon_chat" target="_blank" rel="noopener"><span class="k">Чат пользователей</span><b>@pgon_chat</b><span class="n">вопросы и отзывы</span></a>
+      <a class="tgc" href="https://t.me/pgon" target="_blank" rel="noopener"><span class="k">Приложение</span><b>@pgon</b><span class="n">кошелёк и карта</span></a>
+      <a class="tgc" href="https://t.me/pgon_support_bot" target="_blank" rel="noopener"><span class="k">Поддержка</span><b>@pgon_support_bot</b><span class="n">ответ за 15 минут</span></a>
+    </div>
+    <div class="docs">
+      <a href="docs/agreement.html">Пользовательское соглашение →</a><a href="docs/privacy.html">Политика конфиденциальности →</a><a href="docs/aml.html">Политика AML →</a><a href="docs/cookie.html">Политика cookie →</a>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head"><h2>Частые <span class="grad">вопросы</span></h2></div>
+    <div class="faq">
+      <details><summary>Работает ли карта, если я живу не в России?</summary><p>Да, карта Visa работает в любой стране, где принимают Visa, онлайн и в магазинах. Её можно добавить в Apple Pay и Google Pay</p></details>
+      <details><summary>Можно пополнять с российской карты?</summary><p>Да, рублями по СБП со своей карты любого российского банка. Комиссия за пополнение 0%</p></details>
+      <details><summary>В какой валюте баланс?</summary><p>В долларах. Если платишь в евро, лирах или другой валюте, пересчёт делает Visa в момент оплаты</p></details>
+      <details><summary>Можно платить в России, когда приезжаю?</summary><p>Да, по любому QR СБП в магазинах, кафе, такси и онлайн. Сумма в рублях списывается с баланса по рыночному курсу</p></details>
+      <details><summary>Сколько стоит карта?</summary><p>Выпуск виртуальной карты Visa стоит $8 один раз, карта готова через 2 минуты</p></details>
+      <details><summary>Нужна ли верификация?</summary><p>Да, все пользователи проходят проверку KYC по политике AML. Шаги верификации бот показывает при открытии кошелька</p></details>
+      <details><summary>Кто стоит за PGON?</summary><p>Компания InterSpin LLC. По пользовательскому соглашению она зарегистрирована и лицензирована в Республике Казахстан. Документы открыты внизу страницы</p></details>
+      <details><summary>Что если платёж не прошёл?</summary><p>Деньги не списываются и остаются на балансе. Поддержка в Telegram поможет разобраться за 15 минут</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="orb"></div>
+  <div class="wrap">
+    <img class="mark" src="assets/logo.webp" alt="PGON">
+    <h2>Деньги из дома<br><span class="grad">работают везде</span></h2>
+    <p>Открой PGON в Telegram и выпусти карту за 2 минуты</p>
+    <a class="btn btn-main" href="https://t.me/pgon" target="_blank" rel="noopener">Открыть PGON <span class="arr">→</span></a>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <span>© 2025–2026 «InterSpin» LLC · прототип дизайна</span>
+  <div class="fl"><a href="docs/privacy.html">Политика конфиденциальности</a><a href="docs/agreement.html">Пользовательское соглашение</a><a href="docs/aml.html">Политика AML</a><a href="docs/cookie.html">Cookie</a><a href="https://t.me/pgon_wallet" target="_blank" rel="noopener">Канал</a><a href="https://t.me/pgon_support_bot" target="_blank" rel="noopener">Поддержка</a></div>
+</div></footer>
+
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const st=document.getElementById('stars');
+for(let i=0;i<60;i++){const s=document.createElement('span');s.style.left=Math.random()*100+'%';s.style.top=Math.random()*60+'%';s.style.animationDelay=(-Math.random()*4)+'s';s.style.opacity=(.15+Math.random()*.6).toFixed(2);st.appendChild(s)}
+// сменяющаяся валюта в заголовке
+const words=[...document.querySelectorAll('#rot span')];let w=0;
+if(!reduce)setInterval(()=>{const a=words[w];a.classList.remove('on');a.classList.add('out');w=(w+1)%words.length;const b=words[w];b.classList.remove('out');b.classList.add('on');setTimeout(()=>a.classList.remove('out'),600)},1800);
+// всплывающие оплаты вокруг карты
+const toasts=[...document.querySelectorAll('#toasts .toast')];let t=0;
+toasts[0].classList.add('on');
+if(!reduce)setInterval(()=>{t=(t+1)%(toasts.length+1);if(t===0){toasts.forEach(x=>x.classList.remove('on'))}else{toasts[t-1].classList.add('on')}},1500);
+else toasts.forEach(x=>x.classList.add('on'));
+// сервисы оплачиваются по очереди
+const sv=[...document.querySelectorAll('#svc .sv')];let k=0;
+if(!reduce)setInterval(()=>{if(k===sv.length){sv.forEach(x=>x.classList.remove('paid'));k=0;return}sv[k].classList.add('paid');k++},700);
+else sv.forEach(x=>x.classList.add('paid'));
+// калькулятор, курс примерный
+const RATE=82.4,rub=document.getElementById('rub'),usd=document.getElementById('usd'),rng=document.getElementById('rng');
+document.getElementById('rateNote').textContent='Пример по курсу 1 $ = '+RATE.toLocaleString('ru-RU')+' ₽, точный курс бот показывает до пополнения';
+function calc(v){v=Math.max(0,Math.round(v));rub.value=v.toLocaleString('ru-RU');rng.value=Math.min(v,300000);usd.textContent=(v/RATE).toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2})}
+rub.addEventListener('input',()=>calc(+rub.value.replace(/\D/g,'')||0));
+rng.addEventListener('input',()=>calc(+rng.value));
+calc(40000);
+</script>
+
+</body>
+</html>
