@@ -371,5 +371,34 @@ rub.addEventListener('input',()=>calc(+rub.value.replace(/\D/g,'')||0));
 rng.addEventListener('input',()=>calc(+rng.value));
 calc(8240);
 </script>
+<!-- Meta Pixel + передача визита в бота PGON (sid в start-параметре) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1291608073098464');fbq('track','PageView');
+(function(){
+  var W='https://pgon-capi.pgonwallet.workers.dev', REF='ref_xs7o1dyr_';
+  function rid(n){var a='abcdefghijkmnpqrstuvwxyz23456789',s='';var r=(window.crypto&&crypto.getRandomValues)?crypto.getRandomValues(new Uint8Array(n)):null;for(var i=0;i<n;i++)s+=a[(r?r[i]:Math.floor(Math.random()*256))%a.length];return s}
+  function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  function cookie(n){var m=document.cookie.match('(?:^|; )'+n+'=([^;]*)');return m?decodeURIComponent(m[1]):null}
+  var q=new URLSearchParams(location.search);
+  var sid=get('pgon_sid'); if(!sid){sid=rid(10);set('pgon_sid',sid)}
+  var fbclid=q.get('fbclid'), gclid=q.get('gclid');
+  if(fbclid)set('pgon_fbc','fb.1.'+Date.now()+'.'+fbclid);
+  if(gclid)set('pgon_gclid',gclid);
+  var utm={};['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){if(q.get(k))utm[k]=q.get(k)});
+  if(Object.keys(utm).length)set('pgon_utm',JSON.stringify(utm));
+  function payload(extra){var o={sid:sid,fbc:cookie('_fbc')||get('pgon_fbc'),fbp:cookie('_fbp'),fbclid:fbclid,gclid:get('pgon_gclid'),url:location.href};try{o.utm=JSON.parse(get('pgon_utm')||'null')}catch(e){}for(var k in extra)o[k]=extra[k];return JSON.stringify(o)}
+  function send(extra){var b=payload(extra);if(navigator.sendBeacon&&navigator.sendBeacon(W+'/v',new Blob([b],{type:'text/plain'})))return;fetch(W+'/v',{method:'POST',body:b,keepalive:true,mode:'no-cors'})}
+  // ссылки на бота несут sid визита
+  document.querySelectorAll('a[href*="t.me/pgon?start='+REF+'"]').forEach(function(a){
+    a.href=a.href.replace(new RegExp(REF+'[A-Za-z0-9_-]*'),REF+sid);
+    a.addEventListener('click',function(){var eid='lead_'+sid+'_'+rid(6);fbq('track','Lead',{},{eventID:eid});send({event:'Lead',event_id:eid})});
+  });
+  // визит фиксируем через 1,5 секунды, когда пиксель успеет поставить _fbp
+  setTimeout(function(){send({})},1500);
+})();
+</script>
+
 </body>
 </html>
