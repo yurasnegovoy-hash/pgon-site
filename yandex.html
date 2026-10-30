@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PGON Wallet: карта для подписок и QR дома</title>
+<meta name="description" content="Виртуальная карта Visa за $8 и 2 минуты в Telegram: пополнение по СБП без комиссии, оплата ChatGPT, Claude, Netflix, Spotify и других сервисов">
+<link rel="icon" href="assets/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Посадочная под поиск Яндекса: один сюжет «карта → подписка оплачена». 4 экрана, без упоминаний крипты. Заголовок hero подстраивается под запрос из UTM */
+:root{
+  --bg:#07060b; --bg2:#0e0b16; --line:rgba(255,255,255,.09); --glass:rgba(255,255,255,.05);
+  --text:#f5f2fc; --muted:#a7a1b8; --dim:#6f6a82;
+  --v1:#7c3aed; --v2:#a855f7; --v3:#f0abfc; --lime:#c8ff5a; --ok:#4ade80;
+  --grad:linear-gradient(120deg,#7c3aed 0%,#a855f7 45%,#f0abfc 100%);
+  --display:Unbounded,"Arial Black",system-ui,sans-serif; --body:Onest,system-ui,-apple-system,sans-serif;
+  --r:28px; color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--v3);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1200px;margin:0 auto;padding-inline:max(24px,env(safe-area-inset-left,0px))}
+h1,h2,h3,.disp{font-family:var(--display);letter-spacing:-.025em;line-height:1;text-wrap:balance}
+p{text-wrap:pretty}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime)}
+.btn{display:inline-flex;align-items:center;gap:12px;height:58px;padding:0 28px;border-radius:999px;font-weight:600;font-size:16px;transition:transform .25s,box-shadow .25s;white-space:nowrap}
+.btn-main{background:var(--text);color:var(--bg)}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 12px 40px -8px rgba(168,85,247,.75)}
+.btn-main .arr{width:34px;height:34px;border-radius:50%;background:var(--v1);color:var(--text);display:grid;place-items:center;margin-right:-14px}
+.btn-ghost{border:1px solid var(--line);background:var(--glass)}
+.glass{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+section{padding-block:110px;position:relative}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:50px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(32px,4.6vw,60px);font-weight:700;max-width:760px}
+.sec-head p{color:var(--muted);max-width:380px}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .8s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* NAV */
+nav{position:fixed;inset:14px 0 auto;z-index:50;pointer-events:none;padding-inline:10px}
+nav .bar{pointer-events:auto;max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 10px 10px 18px;border-radius:999px;background:rgba(7,6,11,.6)}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:18px}
+.logo img{width:34px;height:34px}
+nav .btn{height:46px;padding:0 20px;font-size:15px}
+
+/* HERO */
+.hero{position:relative;padding:140px 0 60px;overflow:hidden;isolation:isolate}
+.horizon{position:absolute;left:50%;top:600px;width:1900px;height:1900px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,var(--bg) 96%,transparent 100%);
+  box-shadow:0 -2px 0 rgba(240,171,252,.85),0 -20px 80px 10px rgba(168,85,247,.5),0 -60px 220px 60px rgba(124,58,237,.32);z-index:-1}
+.stars span{position:absolute;width:2px;height:2px;border-radius:50%;background:var(--text);animation:tw 4s infinite}
+@keyframes tw{50%{opacity:.1}}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:30px;align-items:center}
+.hero-grid>div{min-width:0}
+.hero h1{font-size:clamp(36px,4.8vw,70px);font-weight:800;letter-spacing:-.04em;line-height:.98;margin:22px 0 20px}
+.hero h1 .svc{display:inline-block;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;transition:opacity .4s}
+.hero p.lead{font-size:clamp(17px,1.5vw,20px);color:var(--muted);max-width:540px;margin-bottom:30px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.live{display:inline-flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);padding:10px 16px;border-radius:999px}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);animation:tw 1.6s infinite}
+.live b{color:var(--text);font-variant-numeric:tabular-nums}
+.hero .facts{display:flex;gap:26px;flex-wrap:wrap;margin-top:34px;color:var(--muted);font-size:15px}
+.hero .facts b{display:block;font-family:var(--display);font-size:24px;color:var(--text);font-variant-numeric:tabular-nums}
+
+/* карта */
+.card-scene{position:relative;height:500px;perspective:1300px;display:grid;place-items:center}
+.card-glow{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,.5),transparent 65%);filter:blur(20px);animation:pulse 5s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.12);opacity:.7}}
+.spin{position:relative;width:min(380px,82vw);aspect-ratio:1.586;transform-style:preserve-3d;animation:spin 12s cubic-bezier(.45,.05,.55,.95) infinite;transition:transform .2s}
+.spin.hold{animation-play-state:paused}
+@keyframes spin{0%{transform:rotateY(-18deg) rotateX(10deg)}40%{transform:rotateY(-18deg) rotateX(10deg)}50%{transform:rotateY(162deg) rotateX(10deg)}90%{transform:rotateY(162deg) rotateX(10deg)}100%{transform:rotateY(342deg) rotateX(10deg)}}
+.face{position:absolute;inset:0;border-radius:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;border:1px solid rgba(255,255,255,.2);
+  background:linear-gradient(135deg,#140d22 0%,#3b1d6e 48%,#8b45f0 100%);box-shadow:0 50px 90px -25px rgba(124,58,237,.75)}
+.face::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0%,rgba(240,171,252,.35),transparent 55%),repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0 2px,transparent 2px 9px)}
+.face::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.25) 45%,transparent 60%);background-size:250% 100%;animation:shine 4s linear infinite}
+@keyframes shine{from{background-position:120% 0}to{background-position:-130% 0}}
+.front{padding:26px;display:flex;flex-direction:column;justify-content:space-between;transform:rotateY(0deg) translateZ(1px)}
+.back{transform:rotateY(180deg) translateZ(1px)}
+.face *,.face::before,.face::after{-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.front .top{display:flex;justify-content:space-between;align-items:center;position:relative}
+.front .top img{width:42px}
+.chip-gold{width:46px;height:35px;border-radius:8px;background:linear-gradient(135deg,#f4e3b0,#b8964a);position:relative}
+.chip-gold::after{content:"";position:absolute;inset:8px 10px;border:1px solid rgba(0,0,0,.25);border-radius:4px}
+.front .num{font-family:var(--display);font-size:clamp(15px,1.7vw,20px);letter-spacing:.08em;position:relative}
+.front .bot{display:flex;justify-content:space-between;align-items:end;font-size:13px;color:#e7dcff;position:relative}
+.visa{font-family:var(--display);font-weight:800;font-style:italic;font-size:30px;color:var(--text)}
+.back .strip{position:absolute;left:0;right:0;top:30px;height:46px;background:#06040a}
+.back .issued{position:absolute;left:24px;right:24px;top:100px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,.1);font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.back .issued b{font-family:var(--display);font-size:13px;color:var(--lime)}
+.back .brand{position:absolute;left:24px;bottom:22px;display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700}
+.back .brand img{width:30px}
+.back .visa{position:absolute;right:24px;bottom:16px}
+.toasts{position:absolute;inset:0;pointer-events:none}
+.toast{position:absolute;display:flex;align-items:center;gap:12px;padding:11px 16px 11px 11px;border-radius:18px;font-size:14px;min-width:230px;opacity:0;transform:translateY(16px) scale(.96);transition:opacity .5s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.toast.on{opacity:1;transform:none}
+.toast .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:12px;flex:none}
+.toast b{display:block;font-size:14px}.toast small{color:var(--muted);font-size:12px}
+.toast .amt{margin-left:auto;font-family:var(--display);font-size:14px;padding-left:12px;font-variant-numeric:tabular-nums;color:var(--ok)}
+.t1{left:-2%;top:30px}.t2{right:-4%;bottom:56px}
+
+/* бегущая строка сервисов */
+.band{border-block:1px solid var(--line);background:var(--bg2);overflow:hidden;padding-block:18px}
+.track{display:flex;gap:14px;width:max-content;animation:mq 34s linear infinite;white-space:nowrap}
+.band:hover .track{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--glass);font-family:var(--display);font-weight:600;font-size:15px;transition:border-color .25s,background .25s}
+.chip i{width:10px;height:10px;border-radius:50%;flex:none}
+.chip:hover{border-color:var(--ok);background:rgba(74,222,128,.08)}
+.chip:hover::after{content:"✓ оплачено";font-family:var(--body);font-weight:500;font-size:12px;color:var(--ok)}
+
+/* ЧАТ */
+.how{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.phone{width:min(380px,100%);margin:0 auto;border-radius:44px;padding:14px;background:#15111f;border:1px solid rgba(255,255,255,.14);box-shadow:0 60px 120px -40px rgba(124,58,237,.6)}
+.screen{border-radius:32px;background:#0b0912;height:640px;padding:18px 16px;display:flex;flex-direction:column;gap:10px;overflow:hidden;position:relative}
+.screen .head{display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line);font-size:14px}
+.screen .head img{width:30px;height:30px;border-radius:50%;background:var(--v1);padding:5px}
+.screen .head small{display:block;color:var(--ok);font-size:11px}
+.msg{max-width:84%;padding:11px 14px;border-radius:18px;font-size:14px;line-height:1.4;opacity:0;transform:translateY(12px);transition:opacity .4s,transform .5s cubic-bezier(.2,.8,.2,1)}
+.msg.on{opacity:1;transform:none}
+.msg.bot{background:#1c1727;border-bottom-left-radius:6px;align-self:flex-start}
+.msg.me{background:var(--v1);border-bottom-right-radius:6px;align-self:flex-end}
+.msg.sys{align-self:center;background:rgba(74,222,128,.12);color:var(--ok);border:1px solid rgba(74,222,128,.3);font-weight:600;border-radius:999px;padding:8px 16px}
+.msg .mini{margin-top:10px;border-radius:14px;padding:14px;background:linear-gradient(135deg,#140d22,#3b1d6e 60%,#8b45f0);border:1px solid rgba(255,255,255,.2);font-family:var(--display);letter-spacing:.06em;font-size:13px}
+.msg .mini .r{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;letter-spacing:0;font-family:var(--body);color:#e7dcff}
+.typing{align-self:flex-start;display:none;gap:4px;padding:12px 14px;background:#1c1727;border-radius:18px}
+.typing.on{display:flex}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:dot 1s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes dot{50%{opacity:.2;transform:translateY(-3px)}}
+.timer{position:absolute;left:16px;right:16px;bottom:16px;height:46px;border-radius:14px;background:#1c1727;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-family:var(--display);font-size:14px;overflow:hidden}
+.timer .bar{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(124,58,237,.6),rgba(200,255,90,.25));width:0;transition:width .3s linear}
+.timer span{position:relative}
+.timer b{position:relative;font-variant-numeric:tabular-nums;color:var(--lime)}
+.steps{display:flex;flex-direction:column;gap:14px;margin-top:40px}
+.step{display:flex;gap:18px;align-items:center;padding:20px 22px;border-radius:22px;border:1px solid var(--line);background:var(--bg2);transition:border-color .4s,background .4s}
+.step .n{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:700;border:1px solid var(--line);flex:none;transition:.4s}
+.step b{display:block;font-family:var(--display);font-size:18px;font-weight:600}
+.step small{color:var(--muted);font-size:14px}
+.step.lit{border-color:rgba(168,85,247,.6);background:radial-gradient(100% 100% at 0% 50%,rgba(124,58,237,.25),transparent 70%),var(--bg2)}
+.step.lit .n{background:var(--v1);border-color:var(--v1)}
+.step.done .n{background:var(--ok);border-color:var(--ok);color:var(--bg)}
+
+/* СЕРВИСЫ */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.tab{padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--glass);font-size:14px;transition:.25s}
+.tab.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.svc{position:relative;border-radius:22px;padding:22px 18px;border:1px solid var(--line);background:var(--bg2);min-height:118px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s,border-color .4s,box-shadow .4s}
+.svc .mark{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:15px;color:#fff}
+.svc b{font-family:var(--display);font-weight:600;font-size:15px}
+.svc small{color:var(--muted);font-size:13px}
+.svc .paid{position:absolute;right:12px;top:12px;padding:6px 11px;border-radius:999px;background:rgba(74,222,128,.14);border:1px solid rgba(74,222,128,.35);color:var(--ok);font-size:12px;font-weight:600;opacity:0;transform:scale(.7);transition:.35s cubic-bezier(.2,.8,.2,1)}
+.svc.hit{border-color:rgba(74,222,128,.5);box-shadow:0 0 0 1px rgba(74,222,128,.2),0 20px 60px -20px rgba(74,222,128,.4)}
+.svc.hit .paid{opacity:1;transform:none}
+.svc.hide{opacity:.12;transform:scale(.95);pointer-events:none}
+.note{margin-top:28px;padding:20px 24px;border-radius:20px;border:1px solid rgba(200,255,90,.25);background:rgba(200,255,90,.05);display:flex;gap:14px;align-items:center;color:#e9ffb8}
+
+/* ЦИФРЫ И СРАВНЕНИЕ */
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:70px}
+.num{border-radius:var(--r);padding:34px;border:1px solid var(--line);background:var(--bg2)}
+.num .v{font-family:var(--display);font-size:clamp(44px,6vw,84px);font-weight:800;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.num .v em{font-style:normal;font-size:.45em;color:var(--v3);margin-left:4px}
+.num p{color:var(--muted);margin-top:12px}
+.lanes{display:grid;gap:14px}
+.lane{border-radius:var(--r);padding:26px 30px;border:1px solid var(--line);background:var(--bg2);display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center;overflow:hidden}
+.lane h3{font-size:20px;font-weight:600}
+.lane h3 small{display:block;font-family:var(--body);font-size:13px;color:var(--muted);margin-top:6px;letter-spacing:0}
+.lane .road{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.lane .stop{padding:9px 14px;border-radius:999px;border:1px solid var(--line);font-size:14px;color:#d9d3ea;background:var(--glass);opacity:0;transform:translateX(-10px);transition:.5s}
+.lane .stop.on{opacity:1;transform:none}
+.lane.old .stop.on{text-decoration:line-through;color:var(--dim);transition-delay:.6s}
+.lane.old .stop.on{text-decoration-color:#ff6b6b}
+.lane.new{border-color:rgba(168,85,247,.5);background:radial-gradient(100% 100% at 0% 50%,rgba(124,58,237,.25),transparent 70%),var(--bg2)}
+.lane.new .stop{border-color:rgba(200,255,90,.4);color:var(--lime)}
+.lane .fin{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--ok);color:var(--bg);font-weight:800;opacity:0;transform:scale(.4);transition:.5s cubic-bezier(.2,.8,.2,1)}
+.lane .fin.on{opacity:1;transform:none}
+
+/* ФИНАЛ */
+.final{text-align:center;padding-block:80px 60px;position:relative;overflow:hidden}
+.final::before{content:"";position:absolute;left:50%;bottom:-300px;width:1200px;height:700px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(124,58,237,.5),transparent);filter:blur(30px);z-index:-1}
+.final h2{font-size:clamp(34px,5vw,64px);font-weight:800;margin:18px auto 20px;max-width:800px}
+.final p{color:var(--muted);max-width:520px;margin:0 auto 32px}
+.slot{position:relative;width:min(300px,80vw);margin:50px auto 0;height:170px}
+.slot .ph{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:220px;height:140px;border-radius:28px 28px 0 0;background:#15111f;border:1px solid rgba(255,255,255,.14);border-bottom:0}
+.slot .ph::after{content:"";position:absolute;left:50%;top:14px;width:70px;height:6px;border-radius:6px;background:#2a2238;transform:translateX(-50%)}
+.slot .mini{position:absolute;left:50%;top:0;width:200px;height:126px;border-radius:16px;transform:translateX(-50%) translateY(0);background:linear-gradient(135deg,#140d22,#3b1d6e 60%,#8b45f0);border:1px solid rgba(255,255,255,.25);animation:drop 4s cubic-bezier(.6,0,.3,1) infinite;box-shadow:0 30px 60px -20px rgba(124,58,237,.8)}
+.slot .mini span{position:absolute;left:16px;bottom:14px;font-family:var(--display);font-style:italic;font-weight:800;font-size:18px}
+@keyframes drop{0%,15%{transform:translateX(-50%) translateY(-40px);opacity:1}60%,80%{transform:translateX(-50%) translateY(70px);opacity:1}95%,100%{transform:translateX(-50%) translateY(70px);opacity:0}}
+.trust{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:50px}
+.trust a{padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--glass);font-size:14px;color:#d9d3ea}
+.trust a:hover{border-color:var(--v2)}
+.faq{max-width:760px;margin:70px auto 0;text-align:left}
+details{border-top:1px solid var(--line);padding:20px 0}
+details:last-child{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;font-family:var(--display);font-size:17px;font-weight:500;list-style:none;display:flex;justify-content:space-between;gap:20px}
+summary::after{content:"+";color:var(--v3);font-size:22px}
+details[open] summary::after{content:"–"}
+details p{color:var(--muted);margin-top:12px;font-size:15px}
+footer{padding:40px 0;color:var(--dim);font-size:13px;text-align:center;border-top:1px solid var(--line)}
+footer .docs{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+
+@media(max-width:960px){
+  .hero-grid,.how{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .nums{grid-template-columns:1fr}
+  .lane{grid-template-columns:1fr}
+  .t1{left:0;top:0}.t2{right:0;bottom:20px}
+}
+@media(max-width:600px){
+  section{padding-block:72px}
+  .hero{padding-top:104px;text-align:center}
+  .hero-grid>div{display:flex;flex-direction:column;align-items:center}
+  .hero p.lead,.hero h1{margin-inline:auto}
+  .hero h1{font-size:40px}
+  .cta-row{flex-direction:column;align-items:center;width:100%}
+  .cta-row .btn{width:100%;max-width:360px;justify-content:center}
+  .cta-row .btn .arr{margin-right:0}
+  .proof{grid-template-columns:repeat(3,1fr);gap:10px;width:100%;text-align:center}
+  .proof b{font-size:20px}
+  .card-scene{order:1;height:300px;margin-top:10px}
+  .card-glow{width:280px;height:280px}
+  .spin{width:min(300px,80vw)}
+  .toasts{display:none}
+  .horizon{top:900px}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .sec-head{text-align:center;justify-content:center}
+  .sec-head p{max-width:none}
+  .tabs{justify-content:center}
+  .toast{min-width:200px;font-size:13px}
+  .screen{height:560px}
+  nav .bar{padding-left:14px}
+  nav .btn{padding:0 14px;height:40px;font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.spin{transform:rotateY(-18deg) rotateX(10deg)}.reveal{opacity:1;transform:none}}
+<style>
+/* Hero по центру: текст, кнопка, карта с орбитой сервисов */
+.hero-center{display:flex;flex-direction:column;align-items:center;text-align:center}
+.hero-center h1{max-width:960px}
+.nw{white-space:nowrap}
+.hero-center .lead{margin-inline:auto;max-width:640px;text-align:center}
+.hero-center .cta-row{justify-content:center}
+.hero-center .proof{justify-items:center;text-align:center;border-top:0;margin-top:30px;padding-top:0}
+.hero-center .card-scene{width:100%;height:640px;margin-top:10px}
+.orbit{position:absolute;left:50%;top:50%;width:640px;height:640px;margin:-320px 0 0 -320px;animation:orb 40s linear infinite;pointer-events:none}
+@keyframes orb{to{transform:rotate(360deg)}}
+.orbit .o{position:absolute;left:50%;top:50%;width:0;height:0}
+.orbit .o span{position:absolute;left:0;top:0;transform:translate(-50%,-50%) translateY(-320px);display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;border:1px solid var(--line);background:rgba(14,11,22,.85);backdrop-filter:blur(10px);font-family:var(--display);font-weight:600;font-size:14px;white-space:nowrap;animation:unorb 40s linear infinite;box-shadow:0 10px 30px -10px rgba(124,58,237,.6)}
+@keyframes unorb{to{transform:translate(-50%,-50%) translateY(-320px) rotate(-360deg)}}
+.orbit .o span i{width:9px;height:9px;border-radius:50%}
+.orbit::before{content:"";position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(168,85,247,.25)}
+@media(max-width:960px){.orbit{width:460px;height:460px;margin:-230px 0 0 -230px}.orbit .o span{transform:translate(-50%,-50%) translateY(-230px);font-size:12px;padding:7px 11px}@keyframes unorb{to{transform:translate(-50%,-50%) translateY(-230px) rotate(-360deg)}}.hero-center .card-scene{height:520px}}
+@media(max-width:600px){.hero-center .card-scene{height:400px;order:0}.orbit{width:340px;height:340px;margin:-170px 0 0 -170px}.orbit .o span{transform:translate(-50%,-50%) translateY(-170px);font-size:11px;padding:6px 10px;gap:6px}@keyframes unorb{to{transform:translate(-50%,-50%) translateY(-170px) rotate(-360deg)}}.spin{width:220px}.hero-center .proof{grid-template-columns:repeat(3,1fr);width:100%}}
+/* Все заголовки секций по центру, в две строки */
+.sec-head{flex-direction:column;align-items:center;text-align:center;gap:16px;margin-bottom:44px}
+.sec-head h2{max-width:720px}
+.sec-head p{max-width:520px}
+.task{align-items:center;text-align:center}
+.task .tag{position:static!important;align-self:center;order:-1;margin-bottom:4px}
+.task h3{max-width:420px}
+.task .kpi{justify-content:center;gap:14px 28px}
+.qr{align-self:center}
+.how>div:last-child{text-align:center}
+.how .steps .step{text-align:left}
+.tabs{justify-content:center}
+.note{justify-content:center;text-align:left}
+.final h2{max-width:640px}
+/* Пуш «только что выпущена карта»: каждые 10 секунд, 10 имён и фото */
+.push{position:fixed;left:16px;bottom:16px;z-index:60;display:flex;align-items:center;gap:12px;padding:10px 16px 10px 10px;border-radius:18px;max-width:340px;
+  background:rgba(14,11,22,.9);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 20px 50px -20px rgba(124,58,237,.8);
+  opacity:0;transform:translateY(20px) scale(.96);transition:opacity .45s,transform .5s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+.push.on{opacity:1;transform:none}
+.push img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--v2);flex:none;background:#2a2238}
+.push b{display:block;font-size:14px;line-height:1.3}
+.push small{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}
+.push small i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+@media(max-width:600px){.push{left:12px;right:12px;bottom:12px;max-width:none}}
+/* Первый экран: две боли и два решения */
+.duo{display:flex;flex-direction:column;gap:10px;margin:0 0 26px;max-width:600px}
+.duo .d{display:grid;gap:4px;padding:14px 18px;border-radius:18px;border:1px solid var(--line);background:var(--glass)}
+.duo .d s{color:var(--dim);font-size:15px;text-decoration-color:#ff6b6b;text-decoration-thickness:1.5px}
+.hero h1 .kw{display:inline-block;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;transition:opacity .4s}
+.duo .d s .kw{text-decoration:line-through;text-decoration-color:#ff6b6b;color:var(--muted);font-weight:600}
+.duo .d b{font-size:16px;color:var(--text);padding-left:26px;position:relative}
+.duo .d b::before{content:"✓";position:absolute;left:0;top:1px;width:20px;height:20px;border-radius:50%;background:rgba(74,222,128,.15);color:var(--ok);display:grid;place-items:center;font-size:12px;font-weight:700}
+@media(max-width:600px){.duo{margin-inline:auto;text-align:left}}
+/* Первый экран: выгоды списком, живой счётчик, строка доверия */
+.wins{list-style:none;display:flex;flex-direction:column;gap:10px;margin:-10px 0 30px;max-width:560px}
+.wins li{position:relative;padding-left:32px;color:#d9d3ea;font-size:16px}
+.wins li::before{content:"✓";position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:rgba(74,222,128,.15);color:var(--ok);display:grid;place-items:center;font-size:13px;font-weight:700}
+.proof{display:grid;grid-template-columns:repeat(3,auto);gap:12px 32px;margin-top:36px;padding-top:26px;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+.proof b{display:block;font-family:var(--display);font-size:22px;color:var(--text);font-variant-numeric:tabular-nums}
+@media(max-width:960px){.proof{grid-template-columns:repeat(3,auto)}}
+@media(max-width:600px){.wins{margin-inline:auto;text-align:left}.proof{justify-content:center;text-align:center}}
+/* Слайдеры: горизонтальная лента со снапом, стрелки и точки, экономят высоту */
+.sl{position:relative}
+.sl .rail{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.sl .rail::-webkit-scrollbar{display:none}
+.sl .rail>*{scroll-snap-align:start;flex:0 0 auto}
+.sl .ctl{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+.sl .dots{display:flex;gap:6px}
+.sl .dots i{width:6px;height:6px;border-radius:50%;background:var(--line);transition:.3s}
+.sl .dots i.on{width:22px;background:var(--v2)}
+.sl .arrows{display:flex;gap:8px}
+.sl .arrows button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--glass);font-size:18px;display:grid;place-items:center;transition:.25s}
+.sl .arrows button:hover{background:var(--text);color:var(--bg)}
+.grid.rail{display:flex;grid-template-columns:none}
+.grid.rail .svc{width:218px}
+.four.rail .f{width:270px}
+#compare .two.rail>*{width:min(560px,100%)}
+@media(max-width:600px){.grid.rail .svc{width:62vw}.four.rail .f{width:78vw}}
+/* Дополнение под структуру pgonpay.ru: две задачи, таблицы сравнения, четыре шага */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.task{border-radius:var(--r);padding:34px;border:1px solid var(--line);background:var(--bg2);display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden}
+.task.a{background:radial-gradient(100% 80% at 100% 0%,rgba(124,58,237,.35),transparent 60%),var(--bg2)}
+.task.b{background:radial-gradient(100% 80% at 0% 0%,rgba(200,255,90,.14),transparent 60%),var(--bg2)}
+.task h3{font-size:clamp(24px,2.6vw,34px);font-weight:700}
+.task p{color:var(--muted)}
+.task .kpi{display:flex;gap:22px;flex-wrap:wrap;margin-top:auto}
+.task .kpi b{display:block;font-family:var(--display);font-size:28px}
+.task .kpi span{font-size:13px;color:var(--muted)}
+.task .tag{position:absolute;right:22px;top:22px;padding:7px 12px;border-radius:999px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);background:var(--glass)}
+.qr{width:120px;height:120px;border-radius:18px;background:#fff;padding:10px;position:relative;align-self:flex-start}
+.qr i{position:absolute;left:10px;right:10px;height:2px;background:var(--lime);box-shadow:0 0 14px var(--lime);animation:scan 2.2s ease-in-out infinite}
+@keyframes scan{0%,100%{top:12px}50%{top:106px}}
+.qr svg{width:100%;height:100%}
+.cmp{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--bg2);font-size:15px}
+.cmp th,.cmp td{padding:18px 22px;text-align:left;border-bottom:1px solid var(--line)}
+.cmp tr:last-child td{border-bottom:0}
+.cmp th{font-family:var(--display);font-weight:600;font-size:14px;color:var(--muted)}
+.cmp th.p{color:var(--lime)}
+.cmp td.old{color:var(--dim)}
+.cmp td.p{color:var(--text);font-weight:600}
+.cmp td.p::before{content:"✓ ";color:var(--ok)}
+.cmp td.old::before{content:"✕ ";color:#ff6b6b}
+.cmp tbody tr{opacity:0;transform:translateX(-10px);transition:.5s}
+.reveal.in .cmp tbody tr{opacity:1;transform:none}.cmp tbody tr:nth-child(2){transition-delay:.15s}.cmp tbody tr:nth-child(3){transition-delay:.3s}.cmp tbody tr:nth-child(4){transition-delay:.45s}.cmp tbody tr:nth-child(5){transition-delay:.6s}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.f{border-radius:24px;padding:26px;border:1px solid var(--line);background:var(--bg2);min-height:200px;display:flex;flex-direction:column;gap:12px}
+.f .n{font-family:var(--display);font-size:13px;color:var(--v3);letter-spacing:.12em}
+.f b{font-family:var(--display);font-size:18px;font-weight:600;line-height:1.2}
+.f p{color:var(--muted);font-size:14px}
+.f .ico{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:rgba(124,58,237,.25);font-size:22px}
+@media(max-width:960px){.two,.four{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.two,.four{grid-template-columns:1fr}.cmp th,.cmp td{padding:14px 12px;font-size:13px}.task{text-align:left}}
+</style>
+</head>
+<body>
+
+<nav><div class="bar glass">
+  <a class="logo" href="#"><img src="assets/logo.webp" alt="">PGON</a>
+  <a class="btn btn-main cta" href="https://pgon.pro/promo/H6MAZM882B6L">Открыть кошелёк</a>
+</div></nav>
+
+<!-- 1. HERO: как на pgonpay.ru, «один кошелёк решает 2 проблемы» -->
+<header class="hero">
+  <div class="horizon"></div>
+  <div class="stars" id="stars"></div>
+  <div class="wrap hero-center">
+    <span class="eyebrow"><i></i>Карта Visa и кошелёк PGON в одном аккаунте</span>
+    <h1>Оплачивайте подписки <span class="kw" id="svc">ChatGPT</span> и покупки дома</h1>
+    <p class="lead">Кошелёк PGON закрывает сразу две проблемы: за рубежом платите картой Visa, в России по QR СБП</p>
+    <div class="cta-row">
+      <a class="btn btn-main cta" href="https://pgon.pro/promo/H6MAZM882B6L">Выпустить карту за $8 <span class="arr">→</span></a>
+      <span class="live glass"><i></i>Сегодня выпущено <b id="cnt">184</b> карты</span>
+    </div>
+    <div class="proof">
+      <div><b>2 мин</b>до реквизитов карты</div>
+      <div><b>0%</b>комиссия за пополнение</div>
+      <div><b>41 тыс.</b>подписчиков в канале</div>
+    </div>
+    <div class="card-scene">
+      <div class="card-glow"></div>
+      <div class="orbit" id="orbit"></div>
+      <div class="spin" id="spin">
+        <div class="face front">
+          <div class="top"><img src="assets/logo.webp" alt=""><div class="chip-gold"></div></div>
+          <div class="num">4441 •••• •••• 7823</div>
+          <div class="bot"><span>PGON USER</span><span class="visa">VISA</span></div>
+        </div>
+        <div class="face back">
+          <div class="strip"></div>
+          <div class="issued"><span>Выпущена <span id="now">14:32</span></span><b>ГОТОВА</b></div>
+          <div class="brand"><img src="assets/logo.webp" alt="">PGON</div><span class="visa">VISA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="band"><div class="track" id="track"></div></div>
+
+<!-- 2. ДВЕ ЗАДАЧИ -->
+<section id="tasks">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Одно решение на две проблемы</h2><p>Один баланс закрывает и подписки за рубежом, и покупки дома</p></div>
+    <div class="two">
+      <div class="task a reveal"><span class="tag">Зарубежные сервисы</span>
+        <h3>Подписка снова не оплатилась?</h3>
+        <p>ChatGPT, Netflix и App Store не принимают российские карты. Карта Visa за $8 с реальными реквизитами решает это за 2 минуты, а если оплата не прошла, деньги остаются на балансе</p>
+        <div class="kpi"><div><b>$8</b><span>единоразово за выпуск</span></div><div><b>2 мин</b><span>до готовой карты</span></div><div><b>0%</b><span>комиссия за пополнение</span></div></div>
+      </div>
+      <div class="task b reveal"><span class="tag">Россия · QR СБП</span>
+        <div class="qr"><i></i><svg viewBox="0 0 21 21" fill="#07060b"><path d="M0 0h7v7H0zM2 2v3h3V2zM14 0h7v7h-7zM16 2v3h3V2zM0 14h7v7H0zM2 16v3h3v-3zM8 0h2v2H8zM11 1h2v3h-2zM8 3h2v3H8zM9 8h3v2H9zM0 9h3v2H0zM4 8h3v3H4zM13 8h2v2h-2zM16 8h5v2h-5zM8 11h2v3H8zM11 12h3v2h-3zM15 11h2v3h-2zM18 11h3v3h-3zM8 15h3v2H8zM12 15h2v2h-2zM15 15h3v3h-3zM19 15h2v2h-2zM9 18h2v3H9zM12 18h2v3h-2zM16 19h5v2h-5z"/></svg></div>
+        <h3>Деньги есть, а заплатить в России нечем?</h3>
+        <p>P2P занимает полчаса и грозит блокировкой карты. С PGON наводите камеру на QR СБП на кассе, в кафе или такси, и оплата проходит за 10 секунд с того же баланса</p>
+        <div class="kpi"><div><b>10 сек</b><span>на оплату</span></div><div><b>любой</b><span>QR СБП в России</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. КАК ЭТО РАБОТАЕТ: чат бота -->
+<section id="how" style="background:var(--bg2);border-block:1px solid var(--line)">
+  <div class="wrap how">
+    <div class="reveal">
+      <div class="phone">
+        <div class="screen" id="screen">
+          <div class="head"><img src="assets/logo.webp" alt=""><div>PGON Wallet<small>аккаунт активен</small></div></div>
+          <div class="msg sys">Аккаунт PGON создан</div>
+          <div class="msg bot">Кошелёк открыт. Пополните баланс по СБП, и выпустим карту Visa</div>
+          <div class="msg me">Пополнить 1 000 ₽</div>
+          <div class="msg sys">+1 000 ₽ зачислено по СБП</div>
+          <div class="msg me">Выпустить карту</div>
+          <div class="msg bot">Карта готова, реквизиты ниже<div class="mini">4441 •••• •••• 7823<div class="r"><span>PGON USER</span><span>VISA</span></div></div></div>
+          <div class="msg sys">Оплата ChatGPT Plus $20 прошла</div>
+          <div class="typing" id="typing"><i></i><i></i><i></i></div>
+          <div class="timer"><span>До первой оплаты</span><div class="bar" id="bar"></div><b id="tm">2:00</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal">
+      <span class="eyebrow"><i></i>Как это работает</span>
+      <h2 style="font-size:clamp(32px,4.4vw,56px);font-weight:700;margin-top:18px">Аккаунт за минуту, карта за две</h2>
+      <p style="color:var(--muted);margin-top:18px">Вход по email, телефону или через Telegram, без анкет и визита в банк. Дальше пополнение и карта в кошельке</p>
+      <div class="steps" id="steps">
+        <div class="step"><div class="n">1</div><div><b>Нажал «Открыть кошелёк»</b><small>Вход по email, телефону или Telegram, минута</small></div></div>
+        <div class="step"><div class="n">2</div><div><b>Пополнил по СБП</b><small>С любой российской карты, комиссия 0%</small></div></div>
+        <div class="step"><div class="n">3</div><div><b>Оплатил ChatGPT</b><small>Реквизиты Visa появляются сразу после выпуска</small></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. СРАВНЕНИЕ: две таблицы как на pgonpay.ru -->
+<section id="compare">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Обычный путь и PGON</h2><p>Листайте: зарубежная карта и оплата в России</p></div>
+    <div class="sl"><div class="two rail">
+      <div class="reveal"><p class="eyebrow" style="margin-bottom:14px"><i></i>Зарубежная карта</p>
+        <table class="cmp"><thead><tr><th></th><th>Обычный путь</th><th class="p">PGON</th></tr></thead><tbody>
+          <tr><td>Выпуск</td><td class="old">дни или недели</td><td class="p">2 минуты</td></tr>
+          <tr><td>Работает с RU IP</td><td class="old">часто нет</td><td class="p">да</td></tr>
+          <tr><td>Пополнение</td><td class="old">SWIFT, знакомые</td><td class="p">СБП с карты РФ</td></tr>
+          <tr><td>Платформа</td><td class="old">отдельное приложение</td><td class="p">сайт и Telegram</td></tr>
+          <tr><td>Стоимость</td><td class="old">$15–30 и больше</td><td class="p">$8 один раз</td></tr>
+        </tbody></table></div>
+      <div class="reveal"><p class="eyebrow" style="margin-bottom:14px"><i></i>Оплата в России</p>
+        <table class="cmp"><thead><tr><th></th><th>Через P2P</th><th class="p">PGON</th></tr></thead><tbody>
+          <tr><td>Время</td><td class="old">15–30 минут</td><td class="p">10 секунд</td></tr>
+          <tr><td>Комиссия</td><td class="old">1–3%</td><td class="p">0%</td></tr>
+          <tr><td>Риск блокировки карты</td><td class="old">есть</td><td class="p">нет</td></tr>
+          <tr><td>Нужен контрагент</td><td class="old">да</td><td class="p">нет</td></tr>
+          <tr><td>Где работает</td><td class="old">только вывод</td><td class="p">любой QR СБП</td></tr>
+        </tbody></table></div>
+    </div></div>
+  </div>
+</section>
+
+<!-- 5. ЧЕТЫРЕ ШАГА + СЕРВИСЫ -->
+<section id="steps4" style="background:var(--bg2);border-block:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head reveal"><h2>Четыре шага до первой оплаты</h2><p>Как на сайте, только быстрее</p></div>
+    <div class="sl"><div class="four rail">
+      <div class="f reveal"><div class="ico">✈</div><span class="n">ШАГ 1</span><b>Нажмите «Открыть кошелёк»</b><p>Вход по email, телефону или Telegram, без анкет</p></div>
+      <div class="f reveal"><div class="ico">₽</div><span class="n">ШАГ 2</span><b>Пополните баланс по СБП</b><p>С любой российской карты, комиссия 0%</p></div>
+      <div class="f reveal"><div class="ico">▦</div><span class="n">ШАГ 3</span><b>Наведите на QR СБП в магазине</b><p>Оплата проходит за 10 секунд с баланса</p></div>
+      <div class="f reveal"><div class="ico">▭</div><span class="n">ШАГ 4</span><b>Выпустите карту Visa за $8</b><p>Для ChatGPT, Netflix, Spotify и других сервисов</p></div>
+    </div></div>
+    <div class="tabs reveal" id="tabs" style="margin-top:60px">
+      <button class="tab on" data-f="all">Что оплачивает карта</button>
+      <button class="tab" data-f="ai">Нейросети</button>
+      <button class="tab" data-f="video">Стриминги</button>
+      <button class="tab" data-f="game">Игры</button>
+      <button class="tab" data-f="store">Apple и Google</button>
+    </div>
+    <div class="sl"><div class="grid rail reveal" id="grid"></div></div>
+    <div class="note reveal"><span style="font-size:22px">✓</span><span>Если платёж не прошёл или карту отклонили, деньги остаются на балансе. Поддержка в Telegram отвечает за 15 минут</span></div>
+  </div>
+</section>
+
+<!-- 6. ФИНАЛ И FAQ с сайта -->
+<section class="final">
+  <div class="wrap">
+    <span class="eyebrow"><i></i>Аккаунт за минуту</span>
+    <h2>Откройте PGON Wallet <span class="grad">за 2 минуты</span></h2>
+    <p>Вход по email, телефону или Telegram. Пополните баланс по СБП, платите по QR в России и картой Visa по всему миру</p>
+    <a class="btn btn-main cta" href="https://pgon.pro/promo/H6MAZM882B6L">Открыть PGON Wallet <span class="arr">→</span></a>
+    <div class="slot"><div class="mini"><span>VISA</span></div><div class="ph"></div></div>
+    <div class="trust">
+      <a href="https://t.me/pgon_wallet" target="_blank" rel="noopener">Канал PGON · 41 000 подписчиков</a>
+      <a href="https://t.me/pgon_chat" target="_blank" rel="noopener">Чат пользователей</a>
+      <a href="https://t.me/pgon_support_bot" target="_blank" rel="noopener">Написать в поддержку</a>
+    </div>
+    <div class="faq">
+      <details><summary>Это безопасно? Мои деньги не пропадут?</summary><p>Сервисом управляет InterSpin LLC, компания зарегистрирована и лицензирована в Казахстане. Если платёж не прошёл, деньги остаются на балансе кошелька</p></details>
+      <details><summary>Банк не заблокирует карту за такие операции?</summary><p>Пополнение идёт обычным переводом по СБП, как оплата любой покупки. Дальше вы платите с баланса PGON, российская карта в операциях не участвует</p></details>
+      <details><summary>Карта точно работает с ChatGPT, Netflix, Spotify?</summary><p>Да, это реальные реквизиты Visa. Карта проходит в ChatGPT, Claude, Midjourney, Netflix, Spotify, YouTube, App Store и Google Play</p></details>
+      <details><summary>Нужны ли документы или верификация?</summary><p>Проверка личности проходит в кошельке за пару минут, это требование политики AML. Визит в банк не нужен</p></details>
+      <details><summary>По какому курсу идёт конвертация?</summary><p>По рыночному курсу в момент оплаты, без скрытых наценок. Курс показывается перед подтверждением</p></details>
+      <details><summary>Что если платёж не прошёл или карту отклонили?</summary><p>Деньги остаются на балансе. Напишите в поддержку, ответ в течение 15 минут</p></details>
+      <details><summary>Какие магазины поддерживают оплату по QR?</summary><p>Любые, где есть QR СБП: супермаркеты, кафе, такси, аптеки, маркетплейсы и доставка</p></details>
+      <details><summary>Можно ли вернуть деньги с кошелька?</summary><p>Да, вывод с баланса доступен в кошельке, условия показаны перед подтверждением</p></details>
+    </div>
+  </div>
+</section>
+
+<div class="push" id="push" aria-live="polite"><img alt=""><div><b></b><small><i></i><span></span></small></div></div>
+
+<footer><div class="wrap">
+  © 2025–2026 «InterSpin» LLC
+  <div class="docs"><a href="docs/agreement.html">Пользовательское соглашение</a><a href="docs/privacy.html">Политика конфиденциальности</a><a href="docs/aml.html">Политика AML</a><a href="docs/cookie.html">Политика cookie</a></div>
+</div></footer>
+<script>
+(function(){
+  var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
+  var q=new URLSearchParams(location.search);
+
+  /* заголовок под запрос: utm_term или utm_content с именем сервиса */
+  /* Офферы: ключ из utm_term (Директ подставляет {keyword}) → сервис в h1, подводка, оплата в чате и в плашке. Порядок важен: первое совпадение */
+  var OFFERS=[
+    [["chatgpt","chat gpt","чат gpt","гпт","gpt"],{s:"ChatGPT",lead:"Подписка ChatGPT Plus оплачивается картой Visa за $8 с первого раза. Пополнение в рублях по СБП без комиссии",pay:["ChatGPT Plus","$20","#10a37f","AI"]}],
+    [["claude","клод","anthropic"],{s:"Claude",lead:"Claude Pro, Max и Claude Code оплачиваются картой Visa за $8. Пополнение в рублях по СБП без комиссии",pay:["Claude Pro","$20","#d97757","C"]}],
+    [["cursor"],{s:"Cursor",lead:"Cursor Pro оплачивается картой Visa за $8 с российского IP. Пополнение в рублях по СБП без комиссии",pay:["Cursor Pro","$20","#2b2b2b","⌘"]}],
+    [["midjourney"],{s:"Midjourney",lead:"Midjourney оплачивается картой Visa за $8 с первого раза. Пополнение в рублях по СБП без комиссии",pay:["Midjourney","$10","#7c3aed","M"]}],
+    [["gemini"],{s:"Gemini",lead:"Google AI Pro и Gemini оплачиваются картой Visa за $8. Пополнение в рублях по СБП без комиссии",pay:["Google AI Pro","$20","#4285f4","G"]}],
+    [["perplexity"],{s:"Perplexity",lead:"Perplexity Pro оплачивается картой Visa за $8. Пополнение в рублях по СБП без комиссии",pay:["Perplexity Pro","$20","#20b8cd","P"]}],
+    [["suno"],{s:"Suno",lead:"Suno оплачивается картой Visa за $8. Пополнение в рублях по СБП без комиссии",pay:["Suno Pro","$10","#111","S"]}],
+    [["grok"],{s:"Grok",lead:"SuperGrok и X Premium оплачиваются картой Visa за $8. Пополнение в рублях по СБП без комиссии",pay:["SuperGrok","$30","#111","X"]}],
+    [["нейросет","ии-сервис","ии сервис","openai"],{s:"нейросетях",lead:"ChatGPT, Claude, Midjourney, Cursor и любые другие нейросети оплачиваются картой Visa за $8. Пополнение в рублях по СБП",pay:["ChatGPT Plus","$20","#10a37f","AI"]}],
+    [["netflix","нетфликс"],{s:"Netflix",lead:"Netflix оплачивается картой Visa за $8 с первого раза. Пополнение в рублях по СБП без комиссии",pay:["Netflix","$9,99","#e50914","N"]}],
+    [["spotify","спотифай"],{s:"Spotify",lead:"Spotify Premium оплачивается картой Visa за $8. Пополнение в рублях по СБП без комиссии",pay:["Spotify Premium","$5,99","#1db954","S"]}],
+    [["youtube","ютуб"],{s:"YouTube",lead:"YouTube Premium без рекламы оплачивается картой Visa за $8. Пополнение в рублях по СБП без комиссии",pay:["YouTube Premium","$7,99","#ff0000","▶"]}],
+    [["icloud","айклауд","apple","эпл","app store","апстор"],{s:"iCloud и App Store",lead:"iCloud+, Apple Music и покупки в App Store оплачиваются картой Visa за $8. Пополнение в рублях по СБП",pay:["iCloud+","$0,99","#3693f5","☁"]}],
+    [["google play","гугл плей","google one"],{s:"Google Play",lead:"Покупки в Google Play и Google One оплачиваются картой Visa за $8. Пополнение в рублях по СБП без комиссии",pay:["Google One","$1,99","#34a853","G"]}],
+    [["steam","стим","playstation","xbox","игр"],{s:"Steam и PlayStation",lead:"Steam, PlayStation Store и Xbox оплачиваются картой Visa за $8. Пополнение в рублях по СБП без комиссии",pay:["Steam","$59","#1b2838","S"]}],
+    [["подпис"],{s:"зарубежных подписках",lead:"Любые зарубежные подписки оплачиваются картой Visa за $8 с первого раза. Пополнение в рублях по СБП без комиссии",pay:["Netflix","$9,99","#e50914","N"]}],
+    [["qr","кью ар","сбп","кошел","кошелёк","электронн"],{s:"ChatGPT и App Store",lead:"Пополните кошелёк по СБП и платите по QR в любом магазине, кафе и такси России за 10 секунд. Российская карта для этого не нужна",pay:["QR в Пятёрочке","1 240 ₽","#c8ff5a","QR"]}],
+    [["зарубежн","иностран","visa","виза","виртуальн"],{s:"зарубежных сервисах",lead:"Реальные реквизиты Visa за $8 и 2 минуты в Telegram. Проходят там, где российская карта нет. Пополнение в рублях по СБП",pay:["ChatGPT Plus","$20","#10a37f","AI"]}]
+  ];
+  var term=((q.get("utm_term")||"")+" "+(q.get("utm_content")||"")+" "+(q.get("svc")||"")).toLowerCase(), off=null;
+  OFFERS.some(function(o){return o[0].some(function(k){if(term.indexOf(k)>-1){off=o[1];return true}})});
+  var svc=$("#svc"), hit=off&&off.s;
+  if(off){
+    svc.textContent=off.s;
+    var p=off.pay, t1=$(".toast.t1"); if(t1){t1.querySelector("b").textContent=p[0]; t1.querySelector(".amt").textContent=p[1]; t1.querySelector(".ic").textContent=p[3]; t1.querySelector(".ic").style.background=p[2];}
+    $$("#screen .msg.sys")[2].textContent="Оплата "+p[0]+" "+p[1]+" прошла"; $$("#steps .step b")[2].textContent="Оплатил "+p[0];
+  }else{
+    var ROT=["ChatGPT","Claude","Netflix","App Store","Spotify","Midjourney","Steam","YouTube"], ri=0;
+    setInterval(function(){svc.style.opacity=0;setTimeout(function(){ri=(ri+1)%ROT.length;svc.textContent=ROT[ri];svc.style.opacity=1},400)},2600);
+  }
+  if(hit)document.title="PGON Wallet: оплата "+hit+" и QR в России";
+
+  /* звёзды, время на карте, счётчик */
+  var st=$("#stars");for(var i=0;i<60;i++){var s=document.createElement("span");s.style.left=Math.random()*100+"%";s.style.top=Math.random()*70+"%";s.style.animationDelay=Math.random()*4+"s";st.appendChild(s)}
+  var d=new Date();$("#now").textContent=("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);
+  var base=120+d.getHours()*9+Math.floor(d.getMinutes()/4), cnt=$("#cnt");if(cnt){cnt.textContent=base;setInterval(function(){if(Math.random()<.5){base++;cnt.textContent=base}},5000)}
+
+  /* карта: наклон за мышью */
+  var spin=$("#spin"), scene=spin.parentNode;
+  scene.addEventListener("mousemove",function(e){var r=scene.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;spin.classList.add("hold");spin.style.transform="rotateY("+(x*40-18)+"deg) rotateX("+(10-y*30)+"deg)"});
+  scene.addEventListener("mouseleave",function(){spin.classList.remove("hold");spin.style.transform=""});
+  var toasts=$$(".toast"),ti=0;if(toasts.length)setInterval(function(){toasts.forEach(function(t){t.classList.remove("on")});toasts[ti%toasts.length].classList.add("on");ti++},2800);
+
+  /* орбита сервисов вокруг карты */
+  var ORB=[["ChatGPT","#10a37f"],["Claude","#d97757"],["Netflix","#e50914"],["Spotify","#1db954"],["YouTube","#ff0000"],["App Store","#0a84ff"],["Google Play","#34a853"],["Steam","#66c0f4"],["Midjourney","#7c3aed"],["QR СБП","#c8ff5a"]];
+  var ob=$("#orbit");if(ob){ob.innerHTML=ORB.map(function(l,i){return '<div class="o" style="transform:rotate('+(360/ORB.length*i)+'deg)"><span style="animation-delay:-'+(40/ORB.length*i)+'s"><i style="background:'+l[1]+'"></i>'+l[0]+'</span></div>'}).join("")}
+
+  /* бегущая строка */
+  var LOGOS=[["ChatGPT","#10a37f"],["Claude","#d97757"],["Netflix","#e50914"],["Spotify","#1db954"],["YouTube Premium","#ff0000"],["Midjourney","#7c3aed"],["App Store","#0a84ff"],["Google Play","#34a853"],["Steam","#66c0f4"],["Cursor","#f5f2fc"],["Gemini","#4285f4"],["Perplexity","#20b8cd"],["PlayStation","#0070d1"],["Xbox","#107c10"],["Notion","#f5f2fc"],["Figma","#a259ff"],["Discord","#5865f2"],["Adobe","#ff0000"]];
+  var tr=$("#track"),html="";LOGOS.concat(LOGOS).forEach(function(l){html+='<span class="chip"><i style="background:'+l[1]+'"></i>'+l[0]+'</span>'});tr.innerHTML=html;
+
+  /* чат с таймером */
+  var msgs=$$("#screen .msg"),typing=$("#typing"),bar=$("#bar"),tm=$("#tm"),steps=$$("#steps .step"),chatRun=false;
+  function chat(){
+    if(chatRun)return;chatRun=true;
+    msgs.forEach(function(m){m.classList.remove("on")});steps.forEach(function(s){s.className="step"});
+    var plan=[[0,0],[1,900],[2,2000],[3,3100],[4,4300],[5,5500],[6,7300]], total=9300, t0=Date.now();
+    var iv=setInterval(function(){var p=Math.min(1,(Date.now()-t0)/total);bar.style.width=(p*100)+"%";var left=Math.round(120*(1-p));tm.textContent=Math.floor(left/60)+":"+("0"+left%60).slice(-2);if(p>=1){clearInterval(iv);setTimeout(function(){chatRun=false;chat()},3500)}},100);
+    plan.forEach(function(pl){
+      setTimeout(function(){typing.classList.add("on");$("#screen").appendChild(typing)},Math.max(0,pl[1]-700));
+      setTimeout(function(){typing.classList.remove("on");msgs[pl[0]].classList.add("on");
+        var li=pl[0]<2?0:pl[0]<5?1:2;steps.forEach(function(s,i){s.classList.toggle("lit",i===li);s.classList.toggle("done",i<li)});
+        if(pl[0]===6)steps[2].classList.add("done")},pl[1]);
+    });
+  }
+
+  /* сервисы */
+  var S=[["ChatGPT","ai","#10a37f","AI","$20"],["Claude","ai","#d97757","C","$20"],["Midjourney","ai","#7c3aed","M","$10"],["Cursor","ai","#2b2b2b","⌘","$20"],["Gemini","ai","#4285f4","G","$20"],
+         ["Netflix","video","#e50914","N","$9,99"],["Spotify","video","#1db954","S","$5,99"],["YouTube Premium","video","#ff0000","▶","$7,99"],["Disney+","video","#113ccf","D","$8,99"],["Apple Music","video","#fc3c44","♪","$5,99"],
+         ["Steam","game","#1b2838","S","$59"],["PlayStation Store","game","#0070d1","PS","$69"],["Xbox Game Pass","game","#107c10","X","$9,99"],["Roblox","game","#e2231a","R","$9,99"],["Epic Games","game","#2a2a2a","E","$29"],
+         ["App Store","store","#0a84ff","A","$2,99"],["iCloud+","store","#3693f5","☁","$0,99"],["Google Play","store","#34a853","▶","$4,99"],["Google One","store","#fbbc04","1","$1,99"],["Nintendo eShop","store","#e60012","N","$19"]];
+  var g=$("#grid");g.innerHTML=S.map(function(s){return '<div class="svc" data-f="'+s[1]+'"><div class="mark" style="background:'+s[2]+'">'+s[3]+'</div><div><b>'+s[0]+'</b><br><small>подписка '+s[4]+'</small></div><span class="paid">Оплачено '+s[4]+'</span></div>'}).join("");
+  var cards=$$(".svc"),gi=0;
+  setInterval(function(){var vis=cards.filter(function(c){return !c.classList.contains("hide")});if(!vis.length)return;cards.forEach(function(c){c.classList.remove("hit")});vis[gi%vis.length].classList.add("hit");gi+=7},1500);
+  $("#tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;$$(".tab").forEach(function(t){t.classList.toggle("on",t===b)});cards.forEach(function(c){c.classList.toggle("hide",b.dataset.f!=="all"&&c.dataset.f!==b.dataset.f)})});
+
+  /* пуш о выпуске карты */
+  var PEOPLE=[["Алексей","Москва","m",12],["Марина","Санкт-Петербург","f",47],["Дмитрий","Казань","m",59],["Анна","Екатеринбург","f",32],["Сергей","Новосибирск","m",68],
+    ["Ольга","Нижний Новгород","f",26],["Иван","Краснодар","m",53],["Екатерина","Самара","f",44],["Никита","Тюмень","m",14],["Дарья","Воронеж","f",9]];
+  var push=$("#push"),pi=Math.floor(Math.random()*PEOPLE.length);
+  function showPush(){var r=PEOPLE[pi%PEOPLE.length];pi++;var ago=[2,3,5,8,11,14][Math.floor(Math.random()*6)];
+    push.querySelector("img").src="https://i.pravatar.cc/88?img="+r[3];
+    push.querySelector("b").textContent=r[0]+" только что "+(r[2]==="f"?"выпустила":"выпустил")+" карту Visa";
+    push.querySelector("small span").textContent=r[1]+" · "+ago+" мин назад";
+    push.classList.add("on");setTimeout(function(){push.classList.remove("on")},5500)}
+  setTimeout(showPush,4000);setInterval(showPush,10000);
+
+  /* слайдеры: стрелки и точки */
+  $$(".sl").forEach(function(sl){var rail=$(".rail",sl),ctl=document.createElement("div");ctl.className="ctl";ctl.innerHTML='<div class="dots"></div><div class="arrows"><button aria-label="назад">←</button><button aria-label="вперёд">→</button></div>';sl.appendChild(ctl);
+    var dots=$(".dots",ctl),bt=$$("button",ctl);
+    function step(){var c=rail.children[0];return c?c.getBoundingClientRect().width+14:300}
+    function draw(){var vis=[].filter.call(rail.children,function(c){return !c.classList.contains("hide")});var pages=Math.max(1,Math.ceil((rail.scrollWidth-rail.clientWidth)/step())+1);if(rail.scrollWidth<=rail.clientWidth+4){ctl.style.display="none";return}ctl.style.display="";var cur=Math.round(rail.scrollLeft/step());dots.innerHTML="";for(var i=0;i<Math.min(pages,12);i++){var d=document.createElement("i");if(i===Math.min(cur,11))d.className="on";dots.appendChild(d)}}
+    bt[0].onclick=function(){rail.scrollBy({left:-step()*2,behavior:"smooth"})};bt[1].onclick=function(){rail.scrollBy({left:step()*2,behavior:"smooth"})};
+    rail.addEventListener("scroll",draw);window.addEventListener("resize",draw);new MutationObserver(draw).observe(rail,{childList:true,attributes:true,subtree:true,attributeFilter:["class"]});draw()});
+
+  /* появление, счётчики, дорожки */
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;e.target.classList.add("in");
+    if(e.target.id==="how"||e.target.closest("#how"))chat();
+    $$("[data-n]",e.target).forEach(function(n){var to=+n.dataset.n,t0=Date.now();(function f(){var p=Math.min(1,(Date.now()-t0)/900);n.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)})()});
+    $$("[data-lane]",e.target).forEach(function(l){$$(".stop,.fin",l).forEach(function(s,i){setTimeout(function(){s.classList.add("on")},250*i+200)})});
+    io.unobserve(e.target)})},{threshold:.05,rootMargin:"0px 0px -5% 0px"});
+  $$(".reveal").forEach(function(el){io.observe(el)});
+
+  /* цель Метрики и UTM в ссылку на бота */
+  var utm=q.toString();
+  $$("a.cta").forEach(function(a){a.addEventListener("click",function(){try{ym(109390455,"reachGoal","reg")}catch(e){}})});
+})();
+</script>
+<!-- Yandex.Metrika -->
+<script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(109390455,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/109390455" style="position:absolute;left:-9999px" alt=""></div></noscript>
+</body>
+</html>
