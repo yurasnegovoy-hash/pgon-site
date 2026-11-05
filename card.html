@@ -260,7 +260,12 @@ footer .fl{display:flex;gap:22px;flex-wrap:wrap}
   .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   section{padding-block:84px}
   .hero{padding-top:118px}
-  .horizon{top:760px}
+  /* горизонт привязан к низу блока .facts, а не к фиксированным пикселям:
+     высота текста и цифр зависит от ширины экрана и шрифта, из-за этого 760px съезжал на ряд 0% / 41,7K */
+  .horizon{display:none}
+  .hero .facts{position:relative}
+  .hero .facts::after{content:"";position:absolute;left:50%;top:calc(100% + 28px);width:1900px;height:1900px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,var(--bg) 96%,transparent 100%);
+    box-shadow:0 -2px 0 rgba(240,171,252,.85),0 -20px 80px 10px rgba(168,85,247,.5),0 -60px 220px 60px rgba(124,58,237,.32);z-index:-1;pointer-events:none}
   .card-scene{height:400px}
   .toast{min-width:0;font-size:12px;padding:9px 12px 9px 9px}
   .toast .ic{width:32px;height:32px}
