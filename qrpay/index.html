@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PGON: плати рублями за границей по QR</title>
+<meta name="description" content="Забудь об обмене: пополни кошелёк PGON рублями по СБП и плати по местным QR на Бали, в Таиланде и Вьетнаме как местный">
+<link rel="icon" href="/assets/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800;900&family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Тёплая азиатская ночь в фирменном фиолетовом. Сюжет: турист с рублями платит по местному QR и не ищет обменник. Герой: пижон с телефоном и живая запись оплаты из кошелька */
+:root{
+  --bg:#07060b; --bg2:#0e0b16; --line:rgba(255,255,255,.09); --glass:rgba(255,255,255,.05);
+  --text:#f5f2fc; --muted:#a7a1b8; --dim:#6f6a82;
+  --v1:#7c3aed; --v2:#a855f7; --v3:#f0abfc; --lime:#c8ff5a; --red:#ff6b7a;
+  --grad:linear-gradient(120deg,#7c3aed 0%,#a855f7 45%,#f0abfc 100%);
+  --display:Unbounded,"Arial Black",system-ui,sans-serif; --body:Onest,system-ui,-apple-system,sans-serif;
+  --r:28px; color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img,video{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--v3);outline-offset:3px;border-radius:8px}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+h1,h2,h3,.disp{font-family:var(--display);letter-spacing:-.025em;line-height:1;text-wrap:balance}
+p{text-wrap:pretty}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lime{color:var(--lime)}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime)}
+.btn{display:inline-flex;align-items:center;gap:12px;height:58px;padding:0 28px;border-radius:999px;font-weight:600;font-size:16px;transition:transform .25s,box-shadow .25s,background .25s;white-space:nowrap}
+.btn-main{background:var(--text);color:var(--bg)}
+.btn-main:hover{transform:translateY(-2px);box-shadow:0 12px 40px -8px rgba(168,85,247,.75)}
+.btn-main .arr{width:34px;height:34px;border-radius:50%;background:var(--v1);color:var(--text);display:grid;place-items:center;margin-right:-14px}
+.btn-ghost{border:1px solid var(--line);color:var(--text);background:var(--glass)}
+.btn-ghost:hover{background:rgba(255,255,255,.09)}
+.glass{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+section{padding-block:110px;position:relative}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:52px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(32px,4.6vw,60px);font-weight:700;max-width:820px}
+.sec-head p{color:var(--muted);max-width:380px}
+
+nav{position:fixed;inset:calc(14px + env(safe-area-inset-top,0px)) 0 auto;z-index:50;pointer-events:none;padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
+nav .bar{pointer-events:auto;max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:10px 10px 10px 18px;border-radius:999px;background:rgba(7,6,11,.55)}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:18px}
+.logo img{width:34px;height:34px}
+nav .links{display:flex;gap:28px;font-size:15px;color:var(--muted)}
+nav .links a:hover{color:var(--text)}
+nav .btn{height:46px;padding:0 20px;font-size:15px}
+
+/* HERO */
+.hero{position:relative;padding:140px 0 0;overflow:hidden;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(900px 600px at 78% 62%,rgba(124,58,237,.42),transparent 70%),radial-gradient(600px 400px at 10% 10%,rgba(200,255,90,.07),transparent 70%)}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:20px;align-items:end}
+.hero-grid>div{min-width:0}
+.hero .copy{padding-bottom:90px}
+.hero h1{font-size:clamp(38px,5.2vw,78px);font-weight:800;letter-spacing:-.04em;line-height:.98;margin:22px 0}
+.hero p.lead{font-size:clamp(17px,1.5vw,20px);color:var(--muted);max-width:540px;margin-bottom:32px}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap}
+.facts{display:flex;gap:30px;flex-wrap:wrap;margin-top:36px;color:var(--muted);font-size:15px}
+.facts b{display:block;font-family:var(--display);font-size:24px;color:var(--text)}
+.stage{position:relative;height:640px}
+.stage .bird{position:absolute;right:-10px;bottom:0;height:100%;width:auto;max-width:none;filter:drop-shadow(0 30px 60px rgba(124,58,237,.55))}
+.paid{position:absolute;display:flex;align-items:center;gap:12px;padding:12px 18px 12px 12px;border-radius:18px;font-size:14px;animation:float 5s ease-in-out infinite}
+.paid .ok{width:38px;height:38px;border-radius:12px;background:var(--lime);color:var(--bg);display:grid;place-items:center;font-weight:800;flex:none}
+.paid b{display:block}.paid small{color:var(--muted);font-size:12px}
+.p1{left:0;top:90px}.p2{left:30px;top:270px;animation-delay:-1.6s}.p3{left:-10px;bottom:120px;animation-delay:-3.2s}
+@keyframes float{50%{transform:translateY(-10px)}}
+
+.band{border-block:1px solid var(--line);padding:22px 0;overflow:hidden;background:var(--bg2)}
+.track{display:flex;gap:46px;width:max-content;animation:mq 34s linear infinite;font-family:var(--display);font-size:clamp(17px,2vw,26px);font-weight:600;white-space:nowrap}
+.track em{font-style:normal;color:var(--lime)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ШАГИ + ДЕМО */
+.how{display:grid;grid-template-columns:1fr 340px;gap:60px;align-items:center}
+.steps{display:grid;gap:16px}
+.step{display:grid;grid-template-columns:72px 1fr;gap:22px;align-items:center;padding:26px 28px;border-radius:var(--r)}
+.step .n{font-family:var(--display);font-weight:800;font-size:44px;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.step h3{font-size:21px;margin-bottom:8px;line-height:1.15}
+.step p{color:var(--muted);font-size:16px}
+.phone{position:relative;border-radius:44px;padding:10px;background:#15121f;border:1px solid rgba(255,255,255,.16);box-shadow:0 40px 120px -30px rgba(124,58,237,.8)}
+.phone video{border-radius:36px;width:100%}
+.phone .tag{position:absolute;left:50%;bottom:-18px;transform:translateX(-50%);padding:9px 16px;border-radius:999px;font-size:13px;white-space:nowrap;background:var(--lime);color:var(--bg);font-weight:700}
+
+/* СРАВНЕНИЕ */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.col{border-radius:var(--r);padding:36px;border:1px solid var(--line);background:var(--glass)}
+.col.good{background:linear-gradient(160deg,rgba(124,58,237,.34),rgba(168,85,247,.08));border-color:rgba(168,85,247,.5)}
+.col h3{font-size:26px;margin-bottom:24px}
+.col li{list-style:none;display:grid;grid-template-columns:28px 1fr;gap:12px;padding:13px 0;border-top:1px solid var(--line);color:#d9d3ea}
+.col li::before{content:"✕";color:var(--red);font-weight:700}
+.col.good li::before{content:"✓";color:var(--lime)}
+
+/* СТРАНЫ */
+.geo{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.g{border-radius:var(--r);padding:30px;min-height:250px;display:flex;flex-direction:column;border:1px solid var(--line);background:var(--glass)}
+.g .fl{font-size:44px;line-height:1}
+.g h3{font-size:24px;margin:18px 0 10px}
+.g p{color:var(--muted);font-size:15px}
+.g .cur{margin-top:auto;padding-top:18px;font-family:var(--display);font-size:13px;color:var(--v3);letter-spacing:.06em}
+.more{margin-top:18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;color:var(--muted);font-size:15px}
+.pill{padding:7px 13px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:#d9d3ea;background:var(--glass);white-space:nowrap}
+
+/* СИТУАЦИИ */
+.cases{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.case{border-radius:24px;padding:24px;border:1px solid var(--line);background:var(--glass)}
+.case .e{font-size:34px}
+.case b{display:block;font-size:18px;margin:14px 0 6px}
+.case span{color:var(--muted);font-size:15px}
+
+/* КАРТА */
+.cardrow{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;border-radius:36px;padding:54px;background:linear-gradient(140deg,#1a1030,#0e0b16);border:1px solid var(--line);overflow:hidden}
+.cardrow h2{font-size:clamp(28px,3.6vw,46px);margin:14px 0 16px}
+.cardrow p{color:var(--muted);max-width:480px;margin-bottom:26px}
+.plastic{aspect-ratio:1.586;border-radius:24px;padding:26px;background:linear-gradient(135deg,#7c3aed,#3b1a8a 60%,#1b0f3d);display:flex;flex-direction:column;justify-content:space-between;transform:rotate(-6deg);box-shadow:0 40px 90px -30px rgba(124,58,237,.9);max-width:420px;margin-left:auto}
+.plastic img{width:40px}
+.plastic .num{font-family:var(--display);letter-spacing:.08em;font-size:clamp(15px,1.6vw,20px)}
+.plastic .bot{display:flex;justify-content:space-between;align-items:end;font-size:13px}
+.plastic .visa{font-family:var(--display);font-weight:800;font-style:italic;font-size:30px}
+
+.faq{max-width:900px;display:grid;gap:12px}
+details{border:1px solid var(--line);border-radius:22px;padding:22px 26px;background:var(--glass)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;font-size:clamp(17px,1.9vw,21px);font-weight:600}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-family:var(--display);font-size:26px;color:var(--v2);transition:transform .3s;line-height:1}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--muted);margin-top:14px;max-width:720px}
+
+.final{text-align:center;overflow:hidden;padding-bottom:0}
+.final h2{font-size:clamp(36px,6.4vw,96px);font-weight:800;letter-spacing:-.04em;line-height:.98;margin-bottom:24px}
+.final p{color:var(--muted);margin-bottom:30px}
+.final .bird2{height:420px;width:auto;margin:50px auto 0;filter:drop-shadow(0 -10px 80px rgba(124,58,237,.6))}
+footer{border-top:1px solid var(--line);padding-block:36px 56px;color:var(--dim);font-size:14px}
+footer .fl{display:flex;gap:22px;flex-wrap:wrap}
+footer a:hover{color:var(--text)}
+
+/* появление при прокрутке: класс .rv вешает скрипт, без скрипта всё видно сразу */
+.rv{opacity:0;transform:translateY(42px) scale(.97);filter:blur(6px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1),filter .7s;transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none;filter:none}
+.col li.rv{transform:translateX(-24px);filter:none}
+.col.good li.rv{transform:translateX(24px)}
+.col li.rv.in{transform:none}
+.step .n{transition:transform .6s cubic-bezier(.3,1.6,.5,1) calc(var(--d,0s) + .25s)}
+.step.rv .n{transform:scale(.4) rotate(-12deg)}.step.rv.in .n{transform:none}
+.g .fl,.case .e{display:inline-block;animation:bob 3.4s ease-in-out infinite;animation-delay:var(--b,0s)}
+@keyframes bob{50%{transform:translateY(-7px) rotate(-4deg)}}
+.plastic{animation:tilt 6s ease-in-out infinite}
+@keyframes tilt{0%,100%{transform:rotate(-6deg) translateY(0)}50%{transform:rotate(-3deg) translateY(-12px)}}
+.phone{animation:float 6s ease-in-out infinite}
+.col.good{position:relative;overflow:hidden}
+.col.good::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.09) 50%,transparent 65%);transform:translateX(-100%);animation:shine 4.5s ease-in-out infinite;pointer-events:none}
+@keyframes shine{0%,55%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.final .bird2{animation:float 5s ease-in-out infinite}
+
+@media (max-width:1060px){
+  nav .links{display:none}
+  .hero-grid,.how,.cardrow{grid-template-columns:1fr}
+  .hero .copy{text-align:center;padding-bottom:10px}
+  .hero p.lead{margin-inline:auto}
+  .cta-row,.facts{justify-content:center}
+  .stage{height:520px;max-width:520px;margin:0 auto;width:100%}
+  .stage .bird{right:50%;transform:translateX(62%)}
+  .phone{max-width:320px;margin:0 auto}
+  .geo{grid-template-columns:1fr}
+  .g{min-height:0}
+  .cases{grid-template-columns:1fr 1fr}
+  .plastic{margin:10px auto 0}
+}
+@media (max-width:640px){
+  .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  section{padding-block:80px}
+  .hero{padding-top:118px}
+  .cta-row{flex-direction:column}
+  .cta-row .btn,.final .btn,.cardrow .btn{justify-content:center;width:100%}
+  .facts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;text-align:center}
+  .facts b{font-size:20px}
+  .stage{height:440px}
+  .paid{font-size:12px;padding:9px 12px 9px 9px}
+  .paid .ok{width:32px;height:32px}
+  .p1{top:40px}.p2{left:0;top:190px}.p3{left:0;bottom:60px}
+  .sec-head{flex-direction:column;align-items:center;text-align:center;margin-bottom:38px}
+  .step{grid-template-columns:1fr;text-align:center;gap:10px;padding:24px}
+  .vs{grid-template-columns:1fr}
+  .col{padding:26px}
+  .g,.case{text-align:center;align-items:center}
+  .more{justify-content:center}
+  .cardrow{padding:28px;text-align:center}
+  .cardrow p{margin-inline:auto}
+  .final .bird2{height:320px}
+  footer .fl{justify-content:center;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav><div class="bar glass">
+  <a class="logo" href="#top"><img src="/assets/logo.webp" alt="">PGON</a>
+  <div class="links"><a href="#how">Как работает</a><a href="#geo">Страны</a><a href="#card">Карта</a><a href="#faq">Вопросы</a></div>
+  <a class="btn btn-main" href="https://t.me/pgon?start=ref_xs7o1dyr_1" target="_blank" rel="noopener">Открыть кошелёк</a>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="copy">
+      <span class="eyebrow"><i></i>Бали · Таиланд · Вьетнам</span>
+      <h1>Забудь об обмене<br><span class="grad">плати рублями</span><br><span class="lime">как местный</span></h1>
+      <p class="lead">Пополни кошелёк PGON рублями по СБП ещё дома, кошелёк сам обменяет их для оплаты по местным QR в кафе, на рынке и в прокате. Обменники, пачки наличных и поиск курса больше не нужны</p>
+      <div class="cta-row">
+        <a class="btn btn-main" href="https://t.me/pgon?start=ref_xs7o1dyr_1" target="_blank" rel="noopener">Открыть кошелёк <span class="arr">→</span></a>
+        <a class="btn btn-ghost" href="#how">Как это работает</a>
+      </div>
+      <div class="facts"><div><b>0%</b>за пополнение по СБП</div><div><b>10 сек</b>на оплату по QR</div><div><b>14 стран</b>с местными QR</div></div>
+    </div>
+    <div class="stage">
+      <img class="bird" src="/assets/pizhon-point.webp" alt="Пижон PGON с телефоном" width="730" height="1100">
+      <div class="paid glass p1"><span class="ok">✓</span><div><b>Варунг на Бали</b><small>оплачено по QR</small></div></div>
+      <div class="paid glass p2"><span class="ok">✓</span><div><b>Пад тай в Бангкоке</b><small>оплачено по QR</small></div></div>
+      <div class="paid glass p3"><span class="ok">✓</span><div><b>Кофе в Дананге</b><small>оплачено по QR</small></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="band" aria-hidden="true"><div class="track">
+  <span>₽ <em>→</em> Rp</span><span>₽ <em>→</em> ฿</span><span>₽ <em>→</em> ₫</span><span>₽ <em>→</em> ₱</span><span>Без обменников</span><span>Без наличных</span><span>Без поиска курса</span>
+  <span>₽ <em>→</em> Rp</span><span>₽ <em>→</em> ฿</span><span>₽ <em>→</em> ₫</span><span>₽ <em>→</em> ₱</span><span>Без обменников</span><span>Без наличных</span><span>Без поиска курса</span>
+</div></div>
+
+<section id="how">
+  <div class="wrap">
+    <div class="sec-head"><h2>Три шага <span class="grad">от рублей до оплаты</span></h2><p>Всё происходит в Telegram, отдельное приложение ставить не нужно</p></div>
+    <div class="how">
+      <div class="steps">
+        <div class="step glass"><span class="n">01</span><div><h3>Пополни кошелёк рублями</h3><p>Переводом по СБП с карты любого российского банка, комиссия за пополнение 0%. Обмен для оплаты кошелёк делает сам в пару касаний</p></div></div>
+        <div class="step glass"><span class="n">02</span><div><h3>Нажми «Оплатить» и выбери страну</h3><p>В кошельке открой «Иностранный QR» и отметь, где ты сейчас</p></div></div>
+        <div class="step glass"><span class="n">03</span><div><h3>Наведи камеру на QR продавца</h3><p>Продавец получает оплату в своей валюте, а ты видишь сумму списания до подтверждения</p></div></div>
+      </div>
+      <div class="phone">
+        <video src="/assets/qr-demo.mp4" poster="/assets/qr-demo.jpg" autoplay muted loop playsinline></video>
+        <span class="tag">Запись из кошелька PGON</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="vs">
+  <div class="wrap">
+    <div class="sec-head"><h2>Обменник <span class="grad">против QR</span></h2><p>Сколько времени отпуска уходит на то, чтобы просто заплатить за ужин</p></div>
+    <div class="vs">
+      <div class="col"><h3>С обменником</h3><ul>
+        <li>Везёшь с собой доллары и боишься их потерять</li>
+        <li>Ищешь обменник с нормальным курсом и стоишь в очереди</li>
+        <li>Пересчитываешь купюры и проверяешь, не обсчитали ли</li>
+        <li>Носишь пачку наличных в кармане на рынке и пляже</li>
+        <li>В последний день остаются лишние рупии и донги</li>
+      </ul></div>
+      <div class="col good"><h3>С кошельком PGON</h3><ul>
+        <li>Пополнил рублями ещё дома, обмен кошелёк сделал сам</li>
+        <li>Сканируешь тот же QR, по которому платят местные</li>
+        <li>Сумму списания видишь до подтверждения</li>
+        <li>Наличные нужны только на чаевые</li>
+        <li>Остаток возвращается с тобой и работает дома</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="geo">
+  <div class="wrap">
+    <div class="sec-head"><h2>Где уже <span class="grad">можно платить</span></h2><p>Местные QR висят на кассах почти в каждом кафе и магазине</p></div>
+    <div class="geo">
+      <div class="g"><span class="fl">🇮🇩</span><h3>Бали и Индонезия</h3><p>Варунги, кофейни, прокат байков, массаж и доставка</p><span class="cur">IDR · РУПИИ</span></div>
+      <div class="g"><span class="fl">🇹🇭</span><h3>Таиланд</h3><p>Уличная еда, ночные рынки, такси, кафе и магазины у дома</p><span class="cur">THB · БАТЫ</span></div>
+      <div class="g"><span class="fl">🇻🇳</span><h3>Вьетнам</h3><p>Кофе на маленьких стульях, фо, рынки и аренда байка</p><span class="cur">VND · ДОНГИ</span></div>
+    </div>
+    <div class="more">И ещё <span class="pill">🇵🇭 Филиппины</span><span class="pill">🇧🇷 Бразилия</span><span class="pill">🇦🇷 Аргентина</span><span class="pill">🇨🇴 Колумбия</span><span class="pill">🇵🇪 Перу</span><span class="pill">🇧🇴 Боливия</span><span class="pill">🇵🇾 Парагвай</span><span class="pill">🇰🇪 Кения</span><span class="pill">🇹🇿 Танзания</span><span class="pill">🇺🇬 Уганда</span><span class="pill">🇿🇦 ЮАР</span></div>
+  </div>
+</section>
+
+<section id="cases">
+  <div class="wrap">
+    <div class="sec-head"><h2>На что хватает <span class="grad">одного QR</span></h2></div>
+    <div class="cases">
+      <div class="case"><span class="e">🍜</span><b>Еда</b><span>Кафе, варунги, уличная кухня и кофе</span></div>
+      <div class="case"><span class="e">🛵</span><b>Байк</b><span>Прокат на день или на месяц</span></div>
+      <div class="case"><span class="e">🥭</span><b>Рынок</b><span>Фрукты, сувениры и мелочи</span></div>
+      <div class="case"><span class="e">💆</span><b>Отдых</b><span>Массаж, спа и экскурсии</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="card">
+  <div class="wrap">
+    <div class="cardrow">
+      <div>
+        <span class="eyebrow"><i></i>В том же кошельке</span>
+        <h2>Карта Visa <span class="grad">для всего остального</span></h2>
+        <p>Отели, билеты, подписки и оплата телефоном через Apple Pay и Google Pay. Виртуальная карта выпускается за 2 минуты и стоит $8 один раз</p>
+        <a class="btn btn-main" href="https://t.me/pgon?start=ref_xs7o1dyr_1" target="_blank" rel="noopener">Выпустить карту <span class="arr">→</span></a>
+      </div>
+      <div class="plastic"><img src="/assets/logo.webp" alt=""><div class="num">4441 •••• •••• 7823</div><div class="bot"><span>PGON USER</span><span class="visa">VISA</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head"><h2>Частые <span class="grad">вопросы</span></h2></div>
+    <div class="faq">
+      <details><summary>Нужно ли разбираться в крипте?</summary><p>Нет. Ты пополняешь кошелёк рублями по СБП, кошелёк сам обменивает их внутри, а ты просто сканируешь QR и подтверждаешь сумму</p></details>
+      <details><summary>Какие QR подходят?</summary><p>Местные платёжные QR, которые стоят на кассе у продавца. В кошельке нажми «Оплатить», выбери «Иностранный QR» и страну</p></details>
+      <details><summary>Можно пополнить, когда я уже за границей?</summary><p>Да, пополнение по СБП идёт из приложения российского банка и работает из любой страны</p></details>
+      <details><summary>Сколько я заплачу в рублях?</summary><p>Сумму списания кошелёк показывает до того, как ты подтвердишь оплату</p></details>
+      <details><summary>Что будет с остатком после поездки?</summary><p>Он остаётся в кошельке. Им можно платить по QR СБП в России или картой Visa в интернете</p></details>
+      <details><summary>Нужна ли верификация?</summary><p>Да, все пользователи проходят проверку KYC по политике AML. Шаги бот показывает при открытии кошелька</p></details>
+      <details><summary>Что если платёж не прошёл?</summary><p>Деньги не списываются и остаются на балансе. Поддержка в Telegram поможет разобраться</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Лети с телефоном<br><span class="grad">а не с пачкой наличных</span></h2>
+    <p>Открой PGON в Telegram и пополни кошелёк рублями до вылета</p>
+    <a class="btn btn-main" href="https://t.me/pgon?start=ref_xs7o1dyr_1" target="_blank" rel="noopener">Открыть кошелёк <span class="arr">→</span></a>
+    <img class="bird2" src="/assets/pizhon.webp" alt="" width="730" height="1100" loading="lazy">
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <div class="fl"><a href="/docs/privacy.html">Политика конфиденциальности</a><a href="/docs/agreement.html">Пользовательское соглашение</a><a href="/docs/aml.html">Политика AML</a><a href="/docs/cookie.html">Cookie</a><a href="https://t.me/pgon_wallet" target="_blank" rel="noopener">Канал</a><a href="https://t.me/pgon_support_bot" target="_blank" rel="noopener">Поддержка</a></div>
+</div></footer>
+
+<script>
+(function(){
+  if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var groups=['.sec-head','.step','.phone','.col','.col li','.g','.more','.case','.cardrow','.faq details','.final h2','.final p','.final .btn'];
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15,rootMargin:'0px 0px -6% 0px'});
+  groups.forEach(function(sel){document.querySelectorAll(sel).forEach(function(el){
+    var sib=[].slice.call(el.parentNode.children).filter(function(x){return x.matches(sel.split(' ').pop())});
+    el.style.setProperty('--d',(sib.indexOf(el)*0.09).toFixed(2)+'s');
+    el.classList.add('rv');io.observe(el)})});
+  document.querySelectorAll('.g .fl,.case .e').forEach(function(el,i){el.style.setProperty('--b',(-i*0.6)+'s')});
+  // страховка: если наблюдатель не сработал, через 4 секунды показываем всё, что уже в окне
+  setTimeout(function(){document.querySelectorAll('.rv:not(.in)').forEach(function(el){var r=el.getBoundingClientRect();if(r.top<innerHeight)el.classList.add('in')})},4000);
+})();
+</script>
+
+<!-- Meta Pixel + передача визита в бота PGON (sid в start-параметре) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1291608073098464');fbq('track','PageView');
+(function(){
+  var W='https://pgon-capi.pgonwallet.workers.dev', REF='ref_xs7o1dyr_';
+  function rid(n){var a='abcdefghijkmnpqrstuvwxyz23456789',s='';var r=(window.crypto&&crypto.getRandomValues)?crypto.getRandomValues(new Uint8Array(n)):null;for(var i=0;i<n;i++)s+=a[(r?r[i]:Math.floor(Math.random()*256))%a.length];return s}
+  function get(k){try{return localStorage.getItem(k)}catch(e){return null}}
+  function set(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  function cookie(n){var m=document.cookie.match('(?:^|; )'+n+'=([^;]*)');return m?decodeURIComponent(m[1]):null}
+  var q=new URLSearchParams(location.search);
+  var sid=get('pgon_sid'); if(!sid){sid=rid(10);set('pgon_sid',sid)}
+  var fbclid=q.get('fbclid'), gclid=q.get('gclid');
+  if(fbclid)set('pgon_fbc','fb.1.'+Date.now()+'.'+fbclid);
+  if(gclid)set('pgon_gclid',gclid);
+  var utm={};['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){if(q.get(k))utm[k]=q.get(k)});
+  if(Object.keys(utm).length)set('pgon_utm',JSON.stringify(utm));
+  function payload(extra){var o={sid:sid,fbc:cookie('_fbc')||get('pgon_fbc'),fbp:cookie('_fbp'),fbclid:fbclid,gclid:get('pgon_gclid'),url:location.href};try{o.utm=JSON.parse(get('pgon_utm')||'null')}catch(e){}for(var k in extra)o[k]=extra[k];return JSON.stringify(o)}
+  function send(extra){var b=payload(extra);if(navigator.sendBeacon&&navigator.sendBeacon(W+'/v',new Blob([b],{type:'text/plain'})))return;fetch(W+'/v',{method:'POST',body:b,keepalive:true,mode:'no-cors'})}
+  document.querySelectorAll('a[href*="t.me/pgon?start='+REF+'"]').forEach(function(a){
+    a.href=a.href.replace(new RegExp(REF+'[A-Za-z0-9_-]*'),REF+sid);
+    a.addEventListener('click',function(){var eid='lead_'+sid+'_'+rid(6);fbq('track','Lead',{},{eventID:eid});send({event:'Lead',event_id:eid})});
+  });
+  setTimeout(function(){send({})},1500);
+})();
+</script>
+
+</body>
+</html>
