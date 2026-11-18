@@ -63,12 +63,13 @@ nav .btn{height:46px;padding:0 20px;font-size:15px}
 .cta-row{display:flex;gap:14px;flex-wrap:wrap}
 .facts{display:flex;gap:30px;flex-wrap:wrap;margin-top:36px;color:var(--muted);font-size:15px}
 .facts b{display:block;font-family:var(--display);font-size:24px;color:var(--text)}
-.stage{position:relative;height:640px}
+.stage{position:relative;height:790px;margin-bottom:60px}
+.stage .phone{position:absolute;right:60px;top:0;width:284px}
 .stage .bird{position:absolute;right:-10px;bottom:0;height:100%;width:auto;max-width:none;filter:drop-shadow(0 30px 60px rgba(124,58,237,.55))}
 .paid{position:absolute;display:flex;align-items:center;gap:12px;padding:12px 18px 12px 12px;border-radius:18px;font-size:14px;animation:float 5s ease-in-out infinite}
 .paid .ok{width:38px;height:38px;border-radius:12px;background:var(--lime);color:var(--bg);display:grid;place-items:center;font-weight:800;flex:none}
 .paid b{display:block}.paid small{color:var(--muted);font-size:12px}
-.p1{left:0;top:90px}.p2{left:30px;top:270px;animation-delay:-1.6s}.p3{left:-10px;bottom:120px;animation-delay:-3.2s}
+.paid{z-index:2}.p1{left:0;top:110px}.p2{left:40px;top:330px;animation-delay:-1.6s}.p3{left:-10px;bottom:150px;animation-delay:-3.2s}
 @keyframes float{50%{transform:translateY(-10px)}}
 
 .band{border-block:1px solid var(--line);padding:22px 0;overflow:hidden;background:var(--bg2)}
@@ -77,9 +78,8 @@ nav .btn{height:46px;padding:0 20px;font-size:15px}
 @keyframes mq{to{transform:translateX(-50%)}}
 
 /* ШАГИ + ДЕМО */
-.how{display:grid;grid-template-columns:1fr 340px;gap:60px;align-items:center}
-.steps{display:grid;gap:16px}
-.step{display:grid;grid-template-columns:72px 1fr;gap:22px;align-items:center;padding:26px 28px;border-radius:var(--r)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{display:flex;flex-direction:column;gap:18px;padding:32px;border-radius:var(--r)}
 .step .n{font-family:var(--display);font-weight:800;font-size:44px;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .step h3{font-size:21px;margin-bottom:8px;line-height:1.15}
 .step p{color:var(--muted);font-size:16px}
@@ -151,7 +151,6 @@ footer a:hover{color:var(--text)}
 @keyframes bob{50%{transform:translateY(-7px) rotate(-4deg)}}
 .plastic{animation:tilt 6s ease-in-out infinite}
 @keyframes tilt{0%,100%{transform:rotate(-6deg) translateY(0)}50%{transform:rotate(-3deg) translateY(-12px)}}
-.phone{animation:float 6s ease-in-out infinite}
 .col.good{position:relative;overflow:hidden}
 .col.good::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.09) 50%,transparent 65%);transform:translateX(-100%);animation:shine 4.5s ease-in-out infinite;pointer-events:none}
 @keyframes shine{0%,55%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
@@ -159,13 +158,13 @@ footer a:hover{color:var(--text)}
 
 @media (max-width:1060px){
   nav .links{display:none}
-  .hero-grid,.how,.cardrow{grid-template-columns:1fr}
+  .hero-grid,.cardrow,.steps{grid-template-columns:1fr}
   .hero .copy{text-align:center;padding-bottom:10px}
   .hero p.lead{margin-inline:auto}
   .cta-row,.facts{justify-content:center}
-  .stage{height:520px;max-width:520px;margin:0 auto;width:100%}
-  .stage .bird{right:50%;transform:translateX(62%)}
-  .phone{max-width:320px;margin:0 auto}
+  .stage{height:auto;display:flex;justify-content:center;margin:24px 0 80px}
+  .stage .phone{position:relative;right:auto;width:280px}
+  .stage .paid{display:none}
   .geo{grid-template-columns:1fr}
   .g{min-height:0}
   .cases{grid-template-columns:1fr 1fr}
@@ -179,12 +178,8 @@ footer a:hover{color:var(--text)}
   .cta-row .btn,.final .btn,.cardrow .btn{justify-content:center;width:100%}
   .facts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;text-align:center}
   .facts b{font-size:20px}
-  .stage{height:440px}
-  .paid{font-size:12px;padding:9px 12px 9px 9px}
-  .paid .ok{width:32px;height:32px}
-  .p1{top:40px}.p2{left:0;top:190px}.p3{left:0;bottom:60px}
   .sec-head{flex-direction:column;align-items:center;text-align:center;margin-bottom:38px}
-  .step{grid-template-columns:1fr;text-align:center;gap:10px;padding:24px}
+  .step{text-align:center;align-items:center;gap:10px;padding:24px}
   .vs{grid-template-columns:1fr}
   .col{padding:26px}
   .g,.case{text-align:center;align-items:center}
@@ -218,7 +213,10 @@ footer a:hover{color:var(--text)}
       <div class="facts"><div><b>0%</b>за пополнение по СБП</div><div><b>10 сек</b>на оплату по QR</div><div><b>14 стран</b>с местными QR</div></div>
     </div>
     <div class="stage">
-      <img class="bird" src="/assets/pizhon-point.webp" alt="Пижон PGON с телефоном" width="730" height="1100">
+      <div class="phone">
+        <video src="/assets/qr-demo.mp4" poster="/assets/qr-demo.jpg" autoplay muted loop playsinline aria-label="Запись экрана: оплата по иностранному QR в кошельке PGON"></video>
+        <span class="tag">Запись из кошелька PGON</span>
+      </div>
       <div class="paid glass p1"><span class="ok">✓</span><div><b>Варунг на Бали</b><small>оплачено по QR</small></div></div>
       <div class="paid glass p2"><span class="ok">✓</span><div><b>Пад тай в Бангкоке</b><small>оплачено по QR</small></div></div>
       <div class="paid glass p3"><span class="ok">✓</span><div><b>Кофе в Дананге</b><small>оплачено по QR</small></div></div>
@@ -239,10 +237,6 @@ footer a:hover{color:var(--text)}
         <div class="step glass"><span class="n">01</span><div><h3>Пополни кошелёк рублями</h3><p>Переводом по СБП с карты любого российского банка, комиссия за пополнение 0%. Обмен для оплаты кошелёк делает сам в пару касаний</p></div></div>
         <div class="step glass"><span class="n">02</span><div><h3>Нажми «Оплатить» и выбери страну</h3><p>В кошельке открой «Иностранный QR» и отметь, где ты сейчас</p></div></div>
         <div class="step glass"><span class="n">03</span><div><h3>Наведи камеру на QR продавца</h3><p>Продавец получает оплату в своей валюте, а ты видишь сумму списания до подтверждения</p></div></div>
-      </div>
-      <div class="phone">
-        <video src="/assets/qr-demo.mp4" poster="/assets/qr-demo.jpg" autoplay muted loop playsinline></video>
-        <span class="tag">Запись из кошелька PGON</span>
       </div>
     </div>
   </div>
@@ -339,7 +333,7 @@ footer a:hover{color:var(--text)}
 <script>
 (function(){
   if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  var groups=['.sec-head','.step','.phone','.col','.col li','.g','.more','.case','.cardrow','.faq details','.final h2','.final p','.final .btn'];
+  var groups=['.sec-head','.step','.col','.col li','.g','.more','.case','.cardrow','.faq details','.final h2','.final p','.final .btn'];
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15,rootMargin:'0px 0px -6% 0px'});
   groups.forEach(function(sel){document.querySelectorAll(sel).forEach(function(el){
     var sib=[].slice.call(el.parentNode.children).filter(function(x){return x.matches(sel.split(' ').pop())});
