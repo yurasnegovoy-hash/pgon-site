@@ -58,18 +58,29 @@ nav .btn{height:46px;padding:0 20px;font-size:15px}
 .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:20px;align-items:end}
 .hero-grid>div{min-width:0}
 .hero .copy{padding-bottom:90px}
-.hero h1{font-size:clamp(38px,5.2vw,78px);font-weight:800;letter-spacing:-.04em;line-height:.98;margin:22px 0}
-.hero p.lead{font-size:clamp(17px,1.5vw,20px);color:var(--muted);max-width:540px;margin-bottom:32px}
+.hero .copy{container-type:inline-size}
+.hero h1{font-weight:800;letter-spacing:-.04em;line-height:1.02;margin:22px 0 16px;max-width:660px}
+.hero h1 span.l1,.hero h1 span.l2{display:block;white-space:nowrap}
+.hero h1 .l1{font-size:min(8.7cqw,58px)}
+.hero h1 .l2{font-size:min(5.55cqw,37px);margin-top:.18em}
+.with{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:16px;padding:8px 16px 8px 8px;border-radius:999px;border:1px solid var(--line);background:var(--glass);margin-bottom:22px}
+.with img{width:26px;height:26px}
+.hero p.lead{font-size:clamp(16px,1.5vw,20px);color:var(--muted);max-width:540px;margin-bottom:20px}
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:30px;font-size:14px;color:#d9d3ea}
+.flow span{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--glass);white-space:nowrap}
+.flow b{width:28px;height:28px;border-radius:50%;background:rgba(168,85,247,.3);display:grid;place-items:center;font-family:var(--display);font-size:13px;color:var(--text)}
+.flow .on{border-color:rgba(200,255,90,.45)}.flow .on b{background:var(--lime);color:var(--bg)}
+.flow i{font-style:normal;color:var(--v2)}
 .cta-row{display:flex;gap:14px;flex-wrap:wrap}
 .facts{display:flex;gap:30px;flex-wrap:wrap;margin-top:36px;color:var(--muted);font-size:15px}
 .facts b{display:block;font-family:var(--display);font-size:24px;color:var(--text)}
 .stage{position:relative;height:790px;margin-bottom:60px}
-.stage .phone{position:absolute;right:60px;top:0;width:284px}
+.stage .phone{position:absolute;right:50px;top:0;width:360px}
 .stage .bird{position:absolute;right:-10px;bottom:0;height:100%;width:auto;max-width:none;filter:drop-shadow(0 30px 60px rgba(124,58,237,.55))}
 .paid{position:absolute;display:flex;align-items:center;gap:12px;padding:12px 18px 12px 12px;border-radius:18px;font-size:14px;animation:float 5s ease-in-out infinite}
 .paid .ok{width:38px;height:38px;border-radius:12px;background:var(--lime);color:var(--bg);display:grid;place-items:center;font-weight:800;flex:none}
 .paid b{display:block}.paid small{color:var(--muted);font-size:12px}
-.paid{z-index:2}.p1{left:0;top:110px}.p2{left:40px;top:330px;animation-delay:-1.6s}.p3{left:-10px;bottom:150px;animation-delay:-3.2s}
+.paid{z-index:2}.p1{left:-70px;top:110px}.p2{left:-40px;top:330px;animation-delay:-1.6s}.p3{left:-80px;bottom:150px;animation-delay:-3.2s}
 @keyframes float{50%{transform:translateY(-10px)}}
 
 .band{border-block:1px solid var(--line);padding:22px 0;overflow:hidden;background:var(--bg2)}
@@ -83,8 +94,8 @@ nav .btn{height:46px;padding:0 20px;font-size:15px}
 .step .n{font-family:var(--display);font-weight:800;font-size:44px;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 .step h3{font-size:21px;margin-bottom:8px;line-height:1.15}
 .step p{color:var(--muted);font-size:16px}
-.phone{position:relative;border-radius:44px;padding:10px;background:#15121f;border:1px solid rgba(255,255,255,.16);box-shadow:0 40px 120px -30px rgba(124,58,237,.8)}
-.phone video{border-radius:36px;width:100%}
+.phone{position:relative;border-radius:15.5%/7.4%;box-shadow:0 40px 120px -30px rgba(124,58,237,.9)}
+.phone video{border-radius:15.5%/7.4%;width:100%;aspect-ratio:542/1124;background:#0b0720}
 .phone .tag{position:absolute;left:50%;bottom:-18px;transform:translateX(-50%);padding:9px 16px;border-radius:999px;font-size:13px;white-space:nowrap;background:var(--lime);color:var(--bg);font-weight:700}
 
 /* СРАВНЕНИЕ */
@@ -161,9 +172,10 @@ footer a:hover{color:var(--text)}
   .hero-grid,.cardrow,.steps{grid-template-columns:1fr}
   .hero .copy{text-align:center;padding-bottom:10px}
   .hero p.lead{margin-inline:auto}
-  .cta-row,.facts{justify-content:center}
+  .cta-row,.facts,.flow{justify-content:center}
+  .hero h1{margin-inline:auto}
   .stage{height:auto;display:flex;justify-content:center;margin:24px 0 80px}
-  .stage .phone{position:relative;right:auto;width:280px}
+  .stage .phone{position:relative;right:auto;width:min(320px,84vw)}
   .stage .paid{display:none}
   .geo{grid-template-columns:1fr}
   .g{min-height:0}
@@ -173,7 +185,16 @@ footer a:hover{color:var(--text)}
 @media (max-width:640px){
   .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   section{padding-block:80px}
-  .hero{padding-top:118px}
+  .hero{padding-top:104px}
+  .hero h1{margin:16px 0 14px}
+  .with{font-size:14px;margin-bottom:16px}
+  .flow{gap:5px;font-size:12px;margin-bottom:22px;flex-wrap:nowrap}
+  .flow i{display:none}
+  .flow span{padding:5px 10px 5px 5px;gap:6px}
+  .flow b{width:24px;height:24px;font-size:11px}
+  .cta-row .btn-ghost{display:none}
+  .facts{margin-top:24px}
+  .facts div{font-size:13px}
   .cta-row{flex-direction:column}
   .cta-row .btn,.final .btn,.cardrow .btn{justify-content:center;width:100%}
   .facts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;text-align:center}
@@ -204,8 +225,10 @@ footer a:hover{color:var(--text)}
   <div class="wrap hero-grid">
     <div class="copy">
       <span class="eyebrow"><i></i>Бали · Таиланд · Вьетнам</span>
-      <h1>Забудь об обмене<br><span class="grad">плати рублями</span><br><span class="lime">как местный</span></h1>
-      <p class="lead">Пополни кошелёк PGON рублями по СБП ещё дома, кошелёк сам обменяет их для оплаты по местным QR в кафе, на рынке и в прокате. Обменники, пачки наличных и поиск курса больше не нужны</p>
+      <h1><span class="l1">Забудь об обмене</span><span class="l2"><span class="grad">плати рублями</span> <span class="lime">как местный</span></span></h1>
+      <div class="with"><img src="/assets/logo.webp" alt="">с кошельком PGON</div>
+      <p class="lead">Пополняешь кошелёк рублями по СБП, меняешь их на доллары прямо в кошельке без P2P и платишь за границей картой Visa или по местному QR</p>
+      <div class="flow" aria-hidden="true"><span><b>₽</b>рубли по СБП</span><i>→</i><span><b>$</b>без P2P</span><i>→</i><span class="on"><b>✓</b>Visa или QR</span></div>
       <div class="cta-row">
         <a class="btn btn-main" href="https://t.me/pgon?start=ref_xs7o1dyr_1" target="_blank" rel="noopener">Открыть кошелёк <span class="arr">→</span></a>
         <a class="btn btn-ghost" href="#how">Как это работает</a>
@@ -234,8 +257,8 @@ footer a:hover{color:var(--text)}
     <div class="sec-head"><h2>Три шага <span class="grad">от рублей до оплаты</span></h2><p>Всё происходит в Telegram, отдельное приложение ставить не нужно</p></div>
     <div class="how">
       <div class="steps">
-        <div class="step glass"><span class="n">01</span><div><h3>Пополни кошелёк рублями</h3><p>Переводом по СБП с карты любого российского банка, комиссия за пополнение 0%. Обмен для оплаты кошелёк делает сам в пару касаний</p></div></div>
-        <div class="step glass"><span class="n">02</span><div><h3>Нажми «Оплатить» и выбери страну</h3><p>В кошельке открой «Иностранный QR» и отметь, где ты сейчас</p></div></div>
+        <div class="step glass"><span class="n">01</span><div><h3>Пополни кошелёк рублями</h3><p>Переводом по СБП с карты любого российского банка, комиссия за пополнение 0%. Рубли меняешь на доллары прямо в кошельке, без P2P</p></div></div>
+        <div class="step glass"><span class="n">02</span><div><h3>Выбери, как платить</h3><p>Картой Visa через Apple Pay и Google Pay или по местному QR: нажми «Оплатить», «Иностранный QR» и выбери страну</p></div></div>
         <div class="step glass"><span class="n">03</span><div><h3>Наведи камеру на QR продавца</h3><p>Продавец получает оплату в своей валюте, а ты видишь сумму списания до подтверждения</p></div></div>
       </div>
     </div>
@@ -254,7 +277,7 @@ footer a:hover{color:var(--text)}
         <li>В последний день остаются лишние рупии и донги</li>
       </ul></div>
       <div class="col good"><h3>С кошельком PGON</h3><ul>
-        <li>Пополнил рублями ещё дома, обмен кошелёк сделал сам</li>
+        <li>Пополнил рублями ещё дома и обменял на доллары без P2P</li>
         <li>Сканируешь тот же QR, по которому платят местные</li>
         <li>Сумму списания видишь до подтверждения</li>
         <li>Наличные нужны только на чаевые</li>
@@ -306,7 +329,7 @@ footer a:hover{color:var(--text)}
   <div class="wrap">
     <div class="sec-head"><h2>Частые <span class="grad">вопросы</span></h2></div>
     <div class="faq">
-      <details><summary>Нужно ли разбираться в крипте?</summary><p>Нет. Ты пополняешь кошелёк рублями по СБП, кошелёк сам обменивает их внутри, а ты просто сканируешь QR и подтверждаешь сумму</p></details>
+      <details><summary>Нужно ли разбираться в крипте и P2P?</summary><p>Нет. Ты пополняешь кошелёк рублями по СБП и меняешь их на доллары прямо в кошельке, без P2P и чужих карт. Дальше платишь картой Visa или сканируешь QR</p></details>
       <details><summary>Какие QR подходят?</summary><p>Местные платёжные QR, которые стоят на кассе у продавца. В кошельке нажми «Оплатить», выбери «Иностранный QR» и страну</p></details>
       <details><summary>Можно пополнить, когда я уже за границей?</summary><p>Да, пополнение по СБП идёт из приложения российского банка и работает из любой страны</p></details>
       <details><summary>Сколько я заплачу в рублях?</summary><p>Сумму списания кошелёк показывает до того, как ты подтвердишь оплату</p></details>
