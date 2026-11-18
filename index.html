@@ -544,7 +544,9 @@ calc(40000);
 <!-- Meta Pixel + передача визита в бота PGON (sid в start-параметре) -->
 <script>
 !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-fbq('init','1291608073098464');fbq('track','PageView');
+// расширенный поиск совпадений: id визита уходит в Meta как external_id (пиксель сам хэширует его SHA-256)
+var pgSid=(function(){try{var s=localStorage.getItem('pgon_sid');if(!s){var al='abcdefghijkmnpqrstuvwxyz23456789',r=crypto.getRandomValues(new Uint8Array(10));s='';for(var i=0;i<10;i++)s+=al[r[i]%al.length];localStorage.setItem('pgon_sid',s)}return s}catch(e){return null}})();
+fbq('init','1291608073098464',pgSid?{external_id:pgSid}:{});fbq('track','PageView');
 (function(){
   var W='https://pgon-capi.pgonwallet.workers.dev', REF='ref_xs7o1dyr_';
   function rid(n){var a='abcdefghijkmnpqrstuvwxyz23456789',s='';var r=(window.crypto&&crypto.getRandomValues)?crypto.getRandomValues(new Uint8Array(n)):null;for(var i=0;i<n;i++)s+=a[(r?r[i]:Math.floor(Math.random()*256))%a.length];return s}
